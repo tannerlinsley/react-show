@@ -1,0 +1,3 @@
+```
+<Button primary>Primary</Button>
+```

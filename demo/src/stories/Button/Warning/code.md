@@ -1,0 +1,3 @@
+```
+<Button warning>Warning!</Button>
+```
