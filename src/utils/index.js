@@ -35,7 +35,7 @@ export function makeStoriesFromFolders(jsReq, mdReq) {
   const markdown = mdReq.keys().map(k => {
     // component: markdownify(mdReq(k).default)
     return {
-      component: mdReq(k),
+      component: k.includes('.md') ? mdReq(k) : mdReq(k).default,
       path: k.slice(2, k.length).split('/').slice(0, -1),
       type: types.code
     }

@@ -9,7 +9,7 @@ export default ({ storyPath, stories, allStories }) => {
   return (
     <div>
       {story.component()}
-      <Markdown source={story.code} />
+      {typeof story.code === 'function' ? story.code() : <Markdown source={story.code} />}
     </div>
   )
 }

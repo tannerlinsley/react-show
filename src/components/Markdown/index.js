@@ -20,7 +20,7 @@ const Markdown = ({ source }) => {
   )
 
   return (
-    <Wrapper className="markdown" key="md-remark">
+    <Wrapper className="markdown">
       {content}
     </Wrapper>
   )

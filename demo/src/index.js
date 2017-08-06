@@ -8,8 +8,8 @@ import ReactShow, { makeStoriesFromFolders } from '../../src'
 // could easily add more file types here like css, json, etc
 // we may also just want to grab index.js to allow for local
 // utilities and wrappers a la styled-components/glamorous
-const jsReq = require.context('./stories', true, /\.js$/)
-const mdReq = require.context('./stories', true, /\.md$/)
+const jsReq = require.context('./stories', true, /\index.js$/)
+const mdReq = require.context('./stories', true, /\.md|Code.js$/)
 
 // Stories simply need to follow the following structure:
 // @path: An array of strings indicating the hierarchy of the component
