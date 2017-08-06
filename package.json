@@ -23,13 +23,16 @@
     "github-markdown-css": "^2.8.0",
     "glamor": "^2.20.39",
     "glamorous": "^4.1.0",
+    "highlight.js": "^9.12.0",
     "html-loader": "^0.5.0",
     "javascript-detect-element-resize": "^0.5.3",
     "markdown-loader": "^2.0.1",
+    "markdown-to-jsx": "^5.4.2",
     "marked": "^0.3.6",
     "raf": "^3.3.2",
     "react-fastclick": "^3.0.2",
     "react-interface": "^0.1.1",
+    "react-lowlight": "^1.1.1",
     "react-router-dom": "^4.1.2"
   },
   "peerDependencies": {

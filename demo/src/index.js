@@ -19,6 +19,7 @@ const mdReq = require.context('./stories', true, /\.md$/)
 const stories = makeStoriesFromFolders(jsReq, mdReq)
 
 injectGlobal`
+  * { box-sizing: border-box; }
   html, body, #demo {
     height: 100%;
     width: 100%;

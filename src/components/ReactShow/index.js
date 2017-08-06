@@ -2,6 +2,7 @@ import React from 'react'
 import styled, { ThemeProvider } from 'styled-components'
 import { HashRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 import base from 'react-interface/es/themes/base'
+import Story from '../Story'
 import StoryItem from '../StoryItem'
 import { flattenStories } from '../../utils'
 
@@ -15,26 +16,19 @@ const Layout = styled.div`
     padding-left: .5rem;
   }
 
-  section, aside { padding: 1rem }
-  aside { border-right: 1px solid #ddd }
+  section, aside {
+    padding: 1rem;
+    overflow-y: scroll
+  }
+  aside {
+    border-right: 1px solid #ddd;
+    height: 100vh;
+  }
   aside > ul {
     margin: 0;
     padding: 0;
   }
 `
-
-const StoryDemo = ({ storyPath, stories, allStories }) => {
-  const story = allStories
-    .find(s => s.path.join('-').toLowerCase() === storyPath)
-    || stories[0]
-
-  return (
-    <div>
-      {story.component()}
-      {story.code}
-    </div>
-  )
-}
 
 class ReactShow extends React.Component {
   constructor() {
@@ -67,7 +61,7 @@ class ReactShow extends React.Component {
                   </ul>
                 </aside>
                 <section style={{ flex: '1 1 auto' }}>
-                  <StoryDemo
+                  <Story
                     storyPath={match.params.storyPath}
                     stories={this.props.stories}
                     allStories={flattenStories(this.props.stories)}
