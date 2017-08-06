@@ -10,6 +10,12 @@ import ReactShow, { makeStoriesFromFolders } from '../../src'
 // utilities and wrappers a la styled-components/glamorous
 const jsReq = require.context('./stories', true, /\.js$/)
 const mdReq = require.context('./stories', true, /\.md$/)
+
+// Stories simply need to follow the following structure:
+// @path: An array of strings indicating the hierarchy of the component
+// @component: The component that should be rendered
+// @code: The markdown demonstrating the component
+// @children (optional): Nested child stories with the same structure
 const stories = makeStoriesFromFolders(jsReq, mdReq)
 
 injectGlobal`
