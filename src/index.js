@@ -1,22 +1,49 @@
 import React from 'react'
+import styled, { injectGlobal, ThemeProvider } from 'styled-components'
 import { HashRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
+import base from 'react-interface/es/themes/base'
+import StoryItem from './components/StoryItem'
 
-const getKey = (story, i) => `${story.path.join('/')}-${i}`
+injectGlobal`
+  html, body, #demo {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+  }
+`
 
-const Story = ({ path, children, component }) => {
+const Layout = styled.div`
+  height: 100%;
+  width: 100%;
+  display: flex;
+
+  ul {
+    margin-left: .5rem;
+    padding-left: .5rem;
+  }
+
+  section, aside { padding: 1rem }
+  aside { border-right: 1px solid #ddd }
+  aside > ul {
+    margin: 0;
+    padding: 0;
+  }
+`
+
+const StoryDemo = ({ storyPath, stories, allStories }) => {
+  const story = allStories
+    .find(s => s.path.join('-').toLowerCase() === storyPath)
+    || stories[0]
+
   return (
-    <li>
-      <span>{path.join('/')}</span>
-      {component()}
-      <ul>
-        {children && children.map((c, i) => <Story key={getKey(c, i)} {...c} />)}
-      </ul>
-    </li>
+    <div>
+      {story.component()}
+      {story.code}
+    </div>
   )
 }
 
 class ReactStory extends React.Component {
-
   constructor() {
     super()
     this.state = {
@@ -26,9 +53,37 @@ class ReactStory extends React.Component {
 
   render() {
     const stories = this.props.stories.map((s, i) =>
-      <Story key={getKey(s, i)} {...s} />
+      <StoryItem key={`${s.path.join('-')}-${i}`} {...s} />
     )
-    return <ul>{stories}</ul>
+
+    return (
+      <Router>
+        <ThemeProvider theme={base}>
+          <Layout>
+            <aside>
+              <ul style={{ minWidth: 200, flex: '0 1 auto' }}>
+                {stories}
+              </ul>
+            </aside>
+            <section style={{ flex: '1 1 auto' }}>
+              <Route exact path='/' render={() => (
+                <StoryDemo
+                  stories={this.props.stories}
+                  allStories={this.props.allStories}
+                />
+              )} />
+              <Route path='/story/:storyPath' render={({ match }) => (
+                <StoryDemo
+                  storyPath={match.params.storyPath}
+                  stories={this.props.stories}
+                  allStories={this.props.allStories}
+                />
+              )} />
+            </section>
+          </Layout>
+        </ThemeProvider>
+      </Router>
+    )
   }
 }
 

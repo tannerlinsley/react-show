@@ -51,6 +51,7 @@ const groupStories = (components, markdown) => {
 
 // Nest stories according to their unique identifier
 // ex. Button -> Button/Warning -> Button/Warning/ExtraWarning
+// @todo: make this immutable so we can preserve the original flat map
 const nestStories = stories => {
   for (let k in stories) {
     const keys = Object.keys(stories)
@@ -69,16 +70,22 @@ const nestStories = stories => {
   return stories
 }
 
+const mapToArr = (map) => Object.keys.map(k => map[k])
+
 // Transform map of stories into an array for routes
 const groupedStories = groupStories(components, markdown)
 const nestedStories = nestStories(groupedStories)
-const stories = Object.keys(nestedStories)
-  .map(k => nestedStories[k])
+const stories = Object.keys(nestedStories).map(k => nestedStories[k])
+const flat = groupStories(components, markdown)
+const allStories = Object.keys(flat).map(k => flat[k])
 
 export default class Demo extends Component {
   render() {
     return (
-      <ReactStory stories={stories} />
+      <ReactStory
+        stories={stories}
+        allStories={allStories}
+      />
     )
   }
 }
