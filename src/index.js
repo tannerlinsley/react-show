@@ -52,8 +52,11 @@ class ReactStory extends React.Component {
   }
 
   render() {
-    const stories = this.props.stories.map((s, i) =>
-      <StoryItem key={`${s.path.join('-')}-${i}`} {...s} />
+    const stories = match => this.props.stories.map((s, i) =>
+      <StoryItem
+        key={`${s.path.join('-')}-${i}`} {...s}
+        currentPath={match.params.storyPath}
+      />
     )
 
     return (
@@ -67,7 +70,7 @@ class ReactStory extends React.Component {
               <Layout>
                 <aside>
                   <ul style={{ minWidth: 200, flex: '0 1 auto' }}>
-                    {stories}
+                    {stories(match)}
                   </ul>
                 </aside>
                 <section style={{ flex: '1 1 auto' }}>
