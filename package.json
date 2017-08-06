@@ -29,7 +29,7 @@
     "marked": "^0.3.6",
     "raf": "^3.3.2",
     "react-fastclick": "^3.0.2",
-    "react-interface": "^0.1.0",
+    "react-interface": "^0.1.1",
     "react-router-dom": "^4.1.2"
   },
   "peerDependencies": {

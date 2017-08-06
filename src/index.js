@@ -58,30 +58,29 @@ class ReactStory extends React.Component {
 
     return (
       <Router>
-        <ThemeProvider theme={base}>
-          <Layout>
-            <aside>
-              <ul style={{ minWidth: 200, flex: '0 1 auto' }}>
-                {stories}
-              </ul>
-            </aside>
-            <section style={{ flex: '1 1 auto' }}>
-              <Route exact path='/' render={() => (
-                <StoryDemo
-                  stories={this.props.stories}
-                  allStories={this.props.allStories}
-                />
-              )} />
-              <Route path='/story/:storyPath' render={({ match }) => (
-                <StoryDemo
-                  storyPath={match.params.storyPath}
-                  stories={this.props.stories}
-                  allStories={this.props.allStories}
-                />
-              )} />
-            </section>
-          </Layout>
-        </ThemeProvider>
+        <div style={{ height: '100%', width: '100%' }}>
+          <Route exact path='/' render={() =>(
+            <Redirect to={`/story/${this.props.stories[0].path.join('-').toLowerCase()}`} />
+          )} />
+          <Route path='/story/:storyPath' render={({ match }) => (
+            <ThemeProvider theme={base}>
+              <Layout>
+                <aside>
+                  <ul style={{ minWidth: 200, flex: '0 1 auto' }}>
+                    {stories}
+                  </ul>
+                </aside>
+                <section style={{ flex: '1 1 auto' }}>
+                  <StoryDemo
+                    storyPath={match.params.storyPath}
+                    stories={this.props.stories}
+                    allStories={this.props.allStories}
+                  />
+                </section>
+              </Layout>
+            </ThemeProvider>
+          )} />
+        </div>
       </Router>
     )
   }

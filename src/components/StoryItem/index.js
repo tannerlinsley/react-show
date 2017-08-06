@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { MenuItem, MenuHeader } from 'react-interface/es/components/Menu'
+import { MenuItem } from 'react-interface/es/components'
 
 const getKey = (story, i) => `${story.path.join('/')}-${i}`
 const Story = ({ path, children, component }) => {
