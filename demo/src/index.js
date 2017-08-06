@@ -70,8 +70,6 @@ const nestStories = stories => {
   return stories
 }
 
-const mapToArr = (map) => Object.keys.map(k => map[k])
-
 // Transform map of stories into an array for routes
 const groupedStories = groupStories(components, markdown)
 const nestedStories = nestStories(groupedStories)

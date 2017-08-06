@@ -1,5 +1,5 @@
 {
-  "name": "react-story",
+  "name": "@react-tools/react-story",
   "version": "1.0.0",
   "description": "react-story React component",
   "main": "lib/index.js",
