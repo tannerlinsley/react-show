@@ -1,7 +1,7 @@
 {
-  "name": "@react-tools/react-story",
-  "version": "1.0.0",
-  "description": "react-story React component",
+  "name": "react-show",
+  "version": "0.1.0",
+  "description": "react-show React component",
   "main": "lib/index.js",
   "module": "es/index.js",
   "files": [

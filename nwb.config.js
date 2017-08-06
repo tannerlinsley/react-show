@@ -3,7 +3,7 @@ module.exports = {
 	npm: {
 		esModules: true,
 		umd: {
-			global: 'ReactStory',
+			global: 'ReactShow',
 			externals: {
 				react: 'React'
 			}
