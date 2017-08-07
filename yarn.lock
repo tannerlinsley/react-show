@@ -5279,6 +5279,10 @@ raw-body@~2.2.0:
     iconv-lite "0.4.15"
     unpipe "1.0.0"
 
+raw-loader@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/raw-loader/-/raw-loader-0.5.1.tgz#0c3d0beaed8a01c966d9787bf778281252a979aa"
+
 rc@^1.1.7:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.1.tgz#2e03e8e42ee450b8cb3dce65be1bf8974e1dfd95"
@@ -5352,6 +5356,18 @@ react-router@^4.1.1:
     path-to-regexp "^1.5.3"
     prop-types "^15.5.4"
     warning "^3.0.0"
+
+react-smackdown@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/react-smackdown/-/react-smackdown-0.1.1.tgz#59364326e6d616e0d746f336e345efccfe5ac929"
+  dependencies:
+    highlight.js "^9.12.0"
+    html-loader "^0.5.0"
+    markdown-loader "^2.0.1"
+    markdown-to-jsx "^5.4.2"
+    raw-loader "^0.5.1"
+    react-lowlight "^1.1.1"
+    styled-components "^2.1.2"
 
 react-transform-catch-errors@1.0.2:
   version "1.0.2"
@@ -6121,7 +6137,7 @@ style-loader@0.18.2:
     loader-utils "^1.0.2"
     schema-utils "^0.3.0"
 
-styled-components@^2.1.1:
+styled-components@^2.1.1, styled-components@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-2.1.2.tgz#bb419978e1287c5d0d88fa9106b2dd75f66a324c"
   dependencies:

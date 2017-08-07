@@ -30,10 +30,12 @@
     "markdown-to-jsx": "^5.4.2",
     "marked": "^0.3.6",
     "raf": "^3.3.2",
+    "raw-loader": "^0.5.1",
     "react-fastclick": "^3.0.2",
     "react-interface": "^0.1.1",
     "react-lowlight": "^1.1.1",
-    "react-router-dom": "^4.1.2"
+    "react-router-dom": "^4.1.2",
+    "react-smackdown": "^0.1.1"
   },
   "peerDependencies": {
     "react": "15.x"

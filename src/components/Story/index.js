@@ -1,5 +1,5 @@
 import React from 'react'
-import Markdown from '../Markdown'
+import Markdown from 'react-smackdown'
 
 export default ({ storyPath, stories, allStories }) => {
   const story = allStories

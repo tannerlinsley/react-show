@@ -1,9 +1,7 @@
 ```js
-import React from 'react'
-
-export default () => (
-  <button>Hello!</button>
-)
+function hello() {
+  return 'hello!'
+}
 ```
 
 # H1
@@ -52,4 +50,3 @@ Asterisks
 ___
 
 Underscores
-```
