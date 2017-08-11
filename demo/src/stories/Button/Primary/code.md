@@ -1,4 +1,4 @@
-```js
+```javascript
 function hello() {
   return 'hello!'
 }
