@@ -6001,7 +6001,7 @@ style-loader@0.18.2:
     loader-utils "^1.0.2"
     schema-utils "^0.3.0"
 
-styled-components@^2.1.1:
+styled-components@^2.1.1, styled-components@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-2.1.2.tgz#bb419978e1287c5d0d88fa9106b2dd75f66a324c"
   dependencies:
