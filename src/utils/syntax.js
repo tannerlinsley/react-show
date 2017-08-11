@@ -16,7 +16,7 @@ export default {
     { name: 'javascript', syntax: javascript },
     { name: 'json', syntax: json },
     { name: 'css', syntax: css },
-    { name: 'html', syntax: html },
+    { name: 'html', syntax: xml },
     { name: 'shell', syntax: bash },
     { name: 'bash', syntax: bash },
   ],
