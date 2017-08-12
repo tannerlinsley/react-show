@@ -56,7 +56,7 @@ class ReactShow extends React.Component {
             <ThemeProvider theme={base}>
               <Layout>
                 <aside>
-                  <ul style={{ minWidth: 200, flex: '0 1 auto' }}>
+                  <ul style={{ minWidth: 200, flex: '1 0 auto' }}>
                     {stories(match)}
                   </ul>
                 </aside>
