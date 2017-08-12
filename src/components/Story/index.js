@@ -1,6 +1,7 @@
 import React from 'react'
 import Markdown from 'react-smackdown'
 import syntax from '../../utils/syntax'
+import MarkdownWrapper from './MarkdownWrapper'
 
 export default ({ storyPath, stories, allStories }) => {
   const story = allStories
@@ -10,11 +11,13 @@ export default ({ storyPath, stories, allStories }) => {
   return (
     <div>
       {story.component()}
-      {
-        typeof story.code === 'function'
-          ? story.code()
-          : <Markdown source={story.code} syntax={syntax} />
-      }
+      <MarkdownWrapper>
+        {
+          typeof story.code === 'function'
+            ? story.code()
+            : <Markdown source={story.code} syntax={syntax} />
+        }
+      </MarkdownWrapper>
     </div>
   )
 }
