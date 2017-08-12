@@ -19,6 +19,8 @@ Alt-H1
 Alt-H2
 ------
 
+Some inline `code` here.
+
 Emphasis, aka italics, with *asterisks* or _underscores_.
 
 Strong emphasis, aka bold, with **asterisks** or __underscores__.

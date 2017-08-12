@@ -20,7 +20,5 @@ export default {
     { name: 'shell', syntax: bash },
     { name: 'bash', syntax: bash },
   ],
-  showLineNumbers: true,
-  lineNumberStyle: { opacity: .5 },
   theme: atomOneLight
 }
