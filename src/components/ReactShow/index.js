@@ -23,6 +23,8 @@ const Layout = styled.div`
   aside {
     border-right: 1px solid #ddd;
     height: 100vh;
+    min-width: 200px;
+    flex-shrink: 0;
   }
   aside > ul {
     margin: 0;
@@ -56,7 +58,7 @@ class ReactShow extends React.Component {
             <ThemeProvider theme={base}>
               <Layout>
                 <aside>
-                  <ul style={{ minWidth: 200, flex: '1 0 auto' }}>
+                  <ul>
                     {stories(match)}
                   </ul>
                 </aside>
