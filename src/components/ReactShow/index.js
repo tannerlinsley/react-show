@@ -4,7 +4,7 @@ import { HashRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 import base from 'react-interface/es/themes/base'
 import Story from '../Story'
 import StoryItem from '../StoryItem'
-import { flattenStories } from '../../utils'
+import { flattenStories, getSlugFromStory } from '../../utils'
 
 const Layout = styled.div`
   height: 100%;
@@ -23,7 +23,7 @@ const Layout = styled.div`
   aside {
     border-right: 1px solid #ddd;
     height: 100vh;
-    min-width: 200px;
+    min-width: 250px;
     flex-shrink: 0;
   }
   aside > ul {
@@ -43,7 +43,8 @@ class ReactShow extends React.Component {
   render() {
     const stories = match => this.props.stories.map((s, i) =>
       <StoryItem
-        key={`${s.path.join('-')}-${i}`} {...s}
+        key={getSlugFromStory(s)}
+        {...s}
         currentPath={match.params.storyPath}
       />
     )
@@ -52,7 +53,7 @@ class ReactShow extends React.Component {
       <Router>
         <div style={{ height: '100%', width: '100%' }}>
           <Route exact path='/' render={() =>(
-            <Redirect to={`/story/${this.props.stories[0].path.join('-').toLowerCase()}`} />
+            <Redirect to={`/story/${getSlugFromStory(this.props.stories[0])}`} />
           )} />
           <Route path='/story/:storyPath' render={({ match }) => (
             <ThemeProvider theme={base}>
@@ -66,7 +67,6 @@ class ReactShow extends React.Component {
                   <Story
                     storyPath={match.params.storyPath}
                     stories={this.props.stories}
-                    allStories={flattenStories(this.props.stories)}
                   />
                 </section>
               </Layout>

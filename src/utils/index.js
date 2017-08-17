@@ -86,14 +86,16 @@ export function makeStoriesFromFolders(jsReq, mdReq) {
   return stories
 }
 
+export function getSlugFromStory(story) {
+  return story.slug || story.name.split(' ').join('-').toLowerCase()
+}
 
+// Inspired by http://design-system.wonderbly.com/components/atoms/Badge
 // helper method to determine whether a propType method is a particular PropType validator
 const isCorrectPropType = (method, propType) => {
   // console.log(method, PropTypes[propType])
   return method === PropTypes[propType] || method === PropTypes[propType].isRequired
 }
-
-console.log(PropTypes)
 
 // helper method to determine whether a prop is required or not - if it is required,
 // it'll be equal to the .isRequired method on the propType.
@@ -110,8 +112,7 @@ const getPropInfo = method => {
   const propTypes = [
     'string',
     'node',
-    'bool',
-    'oneOf'
+    'bool'
   ];
 
   return propTypes.reduce((obj, curr) => {

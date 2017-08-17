@@ -1,9 +1,11 @@
 import ReactShow from './components/ReactShow'
-import CodeHighlight from './components/CodeHighlight'
-import { makeStoriesFromFolders } from './utils'
+import Demo from './components/Demo'
+import PropsTable from './components/PropsTable'
+import Code from './components/Code'
 
 export {
   ReactShow as default,
-  CodeHighlight,
-  makeStoriesFromFolders
+  Demo,
+  Code,
+  PropsTable
 }
