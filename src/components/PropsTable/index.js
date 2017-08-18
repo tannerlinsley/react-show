@@ -3,24 +3,27 @@ import PropTypes from 'prop-types';
 import { propTypesToObject } from '../../utils'
 import { parse } from 'react-docgen'
 
-const getRows = propTypes => Object.keys(propTypes).map(prop => (
-  <tr key={prop}>
-    <td>{prop}</td>
-    <td>
-      {propTypes[prop].type.name}
-      {propTypes[prop].type.value && propTypes[prop].type.value.map(v => v.value)}
-    </td>
-    <td>{propTypes[prop].required.toString()}</td>
-    <td>{propTypes[prop].defaultValue.value}</td>
-    <td>{propTypes[prop].description}</td>
-  </tr>
-));
+const getRows = propTypes => Object.keys(propTypes).map(prop => {
+  const { type, required, defaultValue, description } = propTypes[prop]
+  return (
+    <tr key={prop}>
+      <td>{prop}</td>
+      <td>
+        {type.name}
+        {type.value && type.value.map(v => v.value)}
+      </td>
+      <td>{required.toString()}</td>
+      <td>{defaultValue && defaultValue.value}</td>
+      <td>{description}</td>
+    </tr>
+  )
+});
 
 const Table = ({ demonstrating, raw }) => {
 
   console.log(parse(raw))
 
-  let propTypes = parse(raw).props
+  const propTypes = parse(raw).props
 
   return (
     <table>

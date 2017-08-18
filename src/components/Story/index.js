@@ -13,7 +13,7 @@ export default ({ stories, storyPath }) => {
 
   return (
     <div>
-      {story.name}
+      {story.name} Examples:
       {story.component()}
     </div>
   )
