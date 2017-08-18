@@ -6,18 +6,19 @@ const Button = () => {
 }
 
 Button.propTypes = {
-  primary: PropTypes.bool,
-  size: PropTypes.string
+  /**
+   * What type of component is this?
+   */
+  primary: PropTypes.bool.isRequired,
+  /**
+   * How big is it?
+   */
+  size: PropTypes.oneOf(['small', 'medium', 'large'])
 }
 
 Button.defaultProps = {
   primary: true,
   size: 'small'
-}
-
-Button.propDescriptions = {
-  primary: "Use the primary color for this button.",
-  size: "How big the button should be."
 }
 
 export default Button
