@@ -1,24 +1,35 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { MenuItem } from 'react-interface/es/components'
+import { getSlugFromStory } from '../../utils'
 
-const getKey = (story, i) => `${story.path.join('/')}-${i}`
-const Story = ({ path, children, component, currentPath }) => {
+const StoryItem = (story) => {
+  const { path, name, children, currentPath } = story
+  const slug = getSlugFromStory(story)
+  const newPath = path ? `${path}/${slug}` : slug
+
   return (
     <div>
-      <Link to={`/story/${path.join('-').toLowerCase()}`}>
-        <MenuItem active={currentPath === path.join('-').toLowerCase()}>
-          {path.join('/')}
+      <Link to={`/story/${newPath}`}>
+        <MenuItem active={currentPath === newPath}>
+          {name}
         </MenuItem>
       </Link>
       <ul>
         {
           children &&
-          children.map((c, i) => <Story key={getKey(c, i)} {...c} currentPath={currentPath} />)
+          children.map((c, i) => (
+            <StoryItem
+              {...c}
+              key={newPath}
+              currentPath={currentPath}
+              path={newPath}
+            />
+          ))
         }
       </ul>
     </div>
   )
 }
 
-export default Story
+export default StoryItem

@@ -1,26 +1,41 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { Demo, Code, PropsTable } from '../../../../src'
+import Button from './Button'
+import ButtonRaw from '!raw-loader!./Button'
+import NormalMarkdown from './ButtonNormal.md'
 
-const Button = () => {
-  return <button>Hello!</button>
+const ButtonNormal = () => (
+  <Demo
+    name="Normal Button"
+    desc="Normal Buttons"
+    code={NormalMarkdown}
+  >
+    <Button>Hello</Button>
+    <Button>Hello</Button>
+    <Button>Hello</Button>
+  </Demo>
+)
+
+const ButtonLarge = () => (
+  <Demo name="Large Button" code={NormalMarkdown}>
+    <Button size='large'>Hello</Button>
+  </Demo>
+)
+//       <PropsTable demonstrating={Button} />
+const DemoComponent = () => {
+  return (
+    <div>
+      <ButtonNormal />
+      <ButtonLarge />
+      <PropsTable
+        demonstrating={Button}
+        raw={ButtonRaw}
+      />
+    </div>
+  )
 }
 
-Button.propTypes = {
-  primary: PropTypes.bool,
-  size: PropTypes.string
+export default {
+  name: 'Button',
+  component: DemoComponent
 }
-
-Button.defaultProps = {
-  primary: true,
-  size: 'small'
-}
-
-Button.propDescriptions = {
-  primary: "Use the primary color for this button.",
-  size: "How big the button should be."
-}
-
-const Demo = () => <Button primary size='small' />
-Demo.demonstrating = Button
-
-export default Demo
