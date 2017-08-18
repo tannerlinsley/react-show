@@ -1,13 +1,15 @@
 import React from 'react'
 import Markdown from 'react-smackdown'
-import { getSlugFromStory } from '../../utils'
+import { getStoryFromSlugs, flattenStories } from '../../utils'
 import syntax from '../../utils/syntax'
 import MarkdownWrapper from './MarkdownWrapper'
 
 export default ({ stories, storyPath }) => {
-  const story = stories
-    .find(s => getSlugFromStory(s) === storyPath)
-    || stories[0]
+  const story = getStoryFromSlugs(
+    storyPath.split('/'),
+    stories,
+    flattenStories(stories)
+  )
 
   console.log(story)
 

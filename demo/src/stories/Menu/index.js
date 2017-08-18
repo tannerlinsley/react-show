@@ -3,7 +3,7 @@ import { Demo, Code, PropsTable } from '../../../../src'
 import { Menu, MenuItem, MenuHeader } from './MenuExample'
 import MenuRaw from '!raw-loader!./MenuExample/Menu'
 import MenuMarkdown from './Menu.md'
-console.log(MenuRaw)
+import MenuItemStory from './MenuItem'
 
 const MenuDemo = () => (
   <Demo
@@ -36,5 +36,6 @@ const DemoComponent = () => {
 
 export default {
   name: 'Menu',
-  component: DemoComponent
+  component: DemoComponent,
+  children: [MenuItemStory]
 }

@@ -41,13 +41,16 @@ class ReactShow extends React.Component {
   }
 
   render() {
-    const stories = match => this.props.stories.map((s, i) =>
-      <StoryItem
-        key={getSlugFromStory(s)}
-        {...s}
-        currentPath={match.params.storyPath}
-      />
-    )
+    const stories = match => this.props.stories.map((s, i) => {
+      return (
+        <StoryItem
+          key={getSlugFromStory(s)}
+          {...s}
+          currentPath={match.params[0]}
+          path=''
+        />
+      )
+    })
 
     return (
       <Router>
@@ -55,7 +58,7 @@ class ReactShow extends React.Component {
           <Route exact path='/' render={() =>(
             <Redirect to={`/story/${getSlugFromStory(this.props.stories[0])}`} />
           )} />
-          <Route path='/story/:storyPath' render={({ match }) => (
+          <Route path='/story/*' render={({ match }) => (
             <ThemeProvider theme={base}>
               <Layout>
                 <aside>
@@ -65,7 +68,7 @@ class ReactShow extends React.Component {
                 </aside>
                 <section style={{ flex: '1 1 auto' }}>
                   <Story
-                    storyPath={match.params.storyPath}
+                    storyPath={match.params[0]}
                     stories={this.props.stories}
                   />
                 </section>
