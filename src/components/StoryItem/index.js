@@ -1,20 +1,24 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { MenuItem } from 'react-interface/es/components'
+import { MenuItem, MenuHeader } from 'react-interface/es/components'
 import { getSlugFromStory } from '../../utils'
 
 const StoryItem = (story) => {
-  const { path, name, children, currentPath } = story
+  const { path, name, children, currentPath, component } = story
   const slug = getSlugFromStory(story)
   const newPath = path ? `${path}/${slug}` : slug
 
   return (
     <div>
-      <Link to={`/story/${newPath}`}>
-        <MenuItem active={currentPath === newPath}>
-          {name}
-        </MenuItem>
-      </Link>
+      {
+        component &&
+        <Link to={`/story/${newPath}`}>
+          <MenuItem active={currentPath === newPath}>
+            {name}
+          </MenuItem>
+        </Link>
+      }
+      {!component && <MenuHeader>{name}</MenuHeader>}
       <ul>
         {
           children &&
