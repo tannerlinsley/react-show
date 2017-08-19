@@ -11,8 +11,6 @@ export default ({ stories, storyPath }) => {
     flattenStories(stories)
   )
 
-  console.log(story)
-
   return (
     <div>
       {story.name} Examples:

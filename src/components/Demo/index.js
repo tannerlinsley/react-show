@@ -3,9 +3,9 @@ import styled from 'styled-components'
 import Code from '../Code'
 const Demo = ({ children, name, desc, code }) => (
   <div>
-    <p>Name: {name}</p>
-    <p>Description: {desc}</p>
-    <Code source={code} />
+    {name && <p>Name: {name}</p>}
+    {desc && <p>Description: {desc}</p>}
+    {code && <Code source={code} />}
     {children}
   </div>
 )
