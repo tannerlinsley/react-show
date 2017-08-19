@@ -9,7 +9,7 @@ const getRows = propTypes => Object.keys(propTypes).map(prop => {
     <tr key={prop}>
       <td>{prop}</td>
       <td>
-        {type.name}
+        {type && type.name}
         {type.value && type.value.map(v => v.value)}
       </td>
       <td>{required.toString()}</td>

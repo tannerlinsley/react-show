@@ -14,7 +14,7 @@ export default ({ stories, storyPath }) => {
   return (
     <div>
       {story.name} Examples:
-      {story.component()}
+      {typeof story.component === 'function' ? story.component() : story.component}
     </div>
   )
 }
