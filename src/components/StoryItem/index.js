@@ -21,7 +21,7 @@ const StoryItem = (story) => {
           children.map((c, i) => (
             <StoryItem
               {...c}
-              key={newPath}
+              key={`${getSlugFromStory(c)}-${i}`}
               currentPath={currentPath}
               path={newPath}
             />
