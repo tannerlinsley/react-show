@@ -1,6 +1,6 @@
 {
   "name": "react-show",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "description": "react-show React component",
   "main": "lib/index.js",
   "module": "es/index.js",
