@@ -22,7 +22,7 @@
     "react-docgen": "^2.17.0",
     "react-interface": "^0.1.1",
     "react-router-dom": "^4.1.2",
-    "react-smackdown": "^0.4.3",
+    "react-smackdown": "^0.6.0",
     "styled-components": "^2.1.2"
   },
   "peerDependencies": {

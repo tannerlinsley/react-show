@@ -21,7 +21,7 @@ const ButtonLarge = () => (
     <Button size='large'>Hello</Button>
   </Demo>
 )
-//       <PropsTable demonstrating={Button} />
+
 const DemoComponent = () => {
   return (
     <div>

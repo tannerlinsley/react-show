@@ -2968,10 +2968,6 @@ highlight.js@~9.12.0:
   version "9.12.0"
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.12.0.tgz#e6d9dbe57cbefe60751f02af336195870c90c01e"
 
-highlight.js@~9.8.0:
-  version "9.8.0"
-  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.8.0.tgz#38eeef40cd45eaddbec8c9e5238fb7a783a3b685"
-
 history@^4.5.1, history@^4.6.0:
   version "4.6.3"
   resolved "https://registry.yarnpkg.com/history/-/history-4.6.3.tgz#6d723a8712c581d6bef37e8c26f4aedc6eb86967"
@@ -3908,7 +3904,7 @@ lower-case@^1.1.1:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/lower-case/-/lower-case-1.1.4.tgz#9a2cabd1b9e8e0ae993a4bf7d5875c39c42e8eac"
 
-lowlight@^1.5.0:
+lowlight@~1.9.1:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/lowlight/-/lowlight-1.9.1.tgz#ed7c3dffc36f8c1f263735c0fe0c907847c11250"
   dependencies:
@@ -5254,20 +5250,20 @@ react-router@^4.1.1:
     prop-types "^15.5.4"
     warning "^3.0.0"
 
-react-smackdown@^0.4.3:
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/react-smackdown/-/react-smackdown-0.4.3.tgz#8835fc870c86f6140d7e1de124f3b16db123dc7e"
+react-smackdown@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/react-smackdown/-/react-smackdown-0.6.0.tgz#10f9352d4d890c403ca4644c97332a988459a5d5"
   dependencies:
     markdown-to-jsx "^5.4.2"
-    react-syntax-highlighter "^5.6.2"
+    react-syntax-highlighter "^5.6.3"
 
-react-syntax-highlighter@^5.6.2:
-  version "5.6.2"
-  resolved "https://registry.yarnpkg.com/react-syntax-highlighter/-/react-syntax-highlighter-5.6.2.tgz#01f5ad3cc44c40c26b6fb4e00a4bed90f66304c5"
+react-syntax-highlighter@^5.6.3:
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/react-syntax-highlighter/-/react-syntax-highlighter-5.7.0.tgz#3cbe81a53fd0f91e34f789c229e5274411054b37"
   dependencies:
     babel-runtime "^6.18.0"
-    highlight.js "~9.8.0"
-    lowlight "^1.5.0"
+    highlight.js "~9.12.0"
+    lowlight "~1.9.1"
 
 react-transform-catch-errors@1.0.2:
   version "1.0.2"
