@@ -16,7 +16,7 @@ Platform:
 npm manifest: 
   {
     "name": "react-show",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "description": "react-show React component",
     "main": "lib/index.js",
     "module": "es/index.js",
@@ -7155,7 +7155,7 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/yeast/-/yeast-0.1.2.tgz#008e06d8094320c372dbc2f8ed76a0ca6c8ac419"
 
 Trace: 
-  Error: https://registry.yarnpkg.com/react-show: You cannot publish over the previously published version 1.0.0.
+  Error: https://registry.yarnpkg.com/react-show: You cannot publish over the previously published version 1.0.2.
       at Request.params.callback [as _callback] (/usr/local/lib/node_modules/yarn/lib/cli.js:62098:18)
       at Request.self.callback (/usr/local/lib/node_modules/yarn/lib/cli.js:123085:22)
       at emitTwo (events.js:125:13)
