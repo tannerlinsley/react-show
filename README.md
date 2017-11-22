@@ -1,9 +1,9 @@
 <div style="text-align:center;">
-  <a href="https://github.com/nozzle/react-show" target="\_parent"><img src="https://github.com/nozzle/react-show/raw/master/media/logo.png" alt="React Show Logo" style="width:450px;"/></a>
+  <a href="https://github.com/react-tools/react-show" target="\_parent"><img src="https://github.com/react-tools/react-show/raw/master/media/logo.png" alt="React Show Logo" style="width:450px;"/></a>
 </div>
 
-<a href="https://travis-ci.org/nozzle/react-show" target="\_parent">
-<img alt="" src="https://travis-ci.org/nozzle/react-show.svg?branch=master" />
+<a href="https://travis-ci.org/react-tools/react-show" target="\_parent">
+<img alt="" src="https://travis-ci.org/react-tools/react-show.svg?branch=master" />
 </a>
 <a href="https://npmjs.com/package/react-show" target="\_parent">
 <img alt="" src="https://img.shields.io/npm/dm/react-show.svg" />
@@ -11,11 +11,11 @@
 <a href="https://react-chat-signup.herokuapp.com/" target="\_parent">
 <img alt="" src="https://img.shields.io/badge/slack-react--chat-blue.svg" />
 </a>
-<a href="https://github.com/nozzle/react-show" target="\_parent">
-<img alt="" src="https://img.shields.io/github/stars/nozzle/react-show.svg?style=social&label=Star" />
+<a href="https://github.com/react-tools/react-show" target="\_parent">
+<img alt="" src="https://img.shields.io/github/stars/react-tools/react-show.svg?style=social&label=Star" />
 </a>
-<a href="https://twitter.com/nozzleio" target="\_parent">
-<img alt="" src="https://img.shields.io/twitter/follow/nozzleio.svg?style=social&label=Follow" />
+<a href="https://twitter.com/react-toolsio" target="\_parent">
+<img alt="" src="https://img.shields.io/twitter/follow/react-toolsio.svg?style=social&label=Follow" />
 </a>
 <a href="https://www.producthunt.com/posts/react-show" target="\_parent">
 <img alt="" src="https://img.shields.io/badge/product-hunt-orange.svg" />
@@ -167,4 +167,4 @@ ReactShow.easings = {
 We are always looking for people to help us grow `react-show`'s capabilities and examples. If you have an issue, feature request, or pull request, let us know!
 
 ## License
-React Show uses the MIT license. For more information on this license, [click here](https://github.com/nozzle/react-show/blob/master/LICENSE).
+React Show uses the MIT license. For more information on this license, [click here](https://github.com/react-tools/react-show/blob/master/LICENSE).
