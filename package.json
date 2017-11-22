@@ -1,6 +1,6 @@
 {
   "name": "react-show",
-  "version": "0.7.0",
+  "version": "1.0.0",
   "description": "react-show React component",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -18,27 +18,27 @@
     "test:coverage": "nwb test-react --coverage",
     "test:watch": "nwb test-react --server"
   },
-  "dependencies": {
-    "react-docgen": "^2.17.0",
-    "react-interface": "^0.1.1",
-    "react-router-dom": "^4.1.2",
-    "react-smackdown": "^0.6.0",
-    "styled-components": "^2.1.2"
-  },
   "peerDependencies": {
-    "react": "15.x"
+    "react": "15 || 16"
   },
   "devDependencies": {
+    "eslint-config-react-tools": "^1.0.10",
     "nwb": "0.18.x",
-    "raw-loader": "^0.5.1",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1"
+    "prop-types": "^15.6.0",
+    "react": "^15.6.1 || 16",
+    "react-dom": "^15.6.1 || 16",
+    "styled-components": "^2.2.3"
   },
   "author": "",
   "homepage": "",
   "license": "MIT",
   "repository": "",
   "keywords": [
-    "react-component"
+    "react-show",
+    "ng-show",
+    "react",
+    "appear",
+    "hide",
+    "collapse"
   ]
 }
