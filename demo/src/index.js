@@ -34,6 +34,7 @@ const BlockThree = styled.div`
 export default class Demo extends Component {
   state = {
     show: true,
+    showSecondary: false,
     duration: 500,
     easing: 'easeOutQuint',
     unmountOnHide: false,
@@ -42,7 +43,16 @@ export default class Demo extends Component {
     extraItems: [],
   }
   render () {
-    const { show, duration, easing, unmountOnHide, minHeight, height, extraItems } = this.state
+    const {
+      show,
+      showSecondary,
+      duration,
+      easing,
+      unmountOnHide,
+      minHeight,
+      height,
+      extraItems,
+    } = this.state
     return (
       <Container>
         <table>
@@ -158,6 +168,14 @@ export default class Demo extends Component {
         <button
           onClick={() =>
             this.setState({
+              showSecondary: !showSecondary,
+            })}
+        >
+          {showSecondary ? 'Hide Secondary' : 'Show Secondary'}
+        </button>
+        <button
+          onClick={() =>
+            this.setState({
               extraItems: [...extraItems, ''],
             })}
         >
@@ -190,6 +208,20 @@ export default class Demo extends Component {
                 </div>
               ))}
             </div>
+            <ReactShow
+              show={showSecondary}
+              easing={easing}
+              duration={duration}
+              unmountOnHide={unmountOnHide}
+            >
+              <div>
+                <div>Second</div>
+                <div>Level</div>
+                <div>Content</div>
+                <div>Goes</div>
+                <div>Here</div>
+              </div>
+            </ReactShow>
           </BlockTwo>
         </ReactShow>
         <BlockThree />

@@ -71,8 +71,9 @@ export default class ReactShow extends React.Component {
     duration: PropTypes.number,
     transitionProperty: PropTypes.string,
     unmountOnHide: PropTypes.bool,
-    minHeight: PropTypes.number,
     height: PropTypes.number,
+    minHeight: PropTypes.number,
+    maxHeight: PropTypes.number,
     transitionOnMount: PropTypes.bool,
     children: PropTypes.node.isRequired,
   }
@@ -84,6 +85,7 @@ export default class ReactShow extends React.Component {
     transitionProperty: 'height',
     unmountOnHide: false,
     minHeight: 0,
+    maxHeight: 0,
     height: undefined,
     transitionOnMount: false,
     style: {},
@@ -92,67 +94,89 @@ export default class ReactShow extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      height: props.transitionOnMount ? 0 : null,
-      show: true,
+      mountContent: props.show,
+      height: props.transitionOnMount ? '0px' : 'auto',
     }
   }
   componentDidMount () {
-    this.measureHeight()
+    if (this.props.show) {
+      this.animateIn()
+    }
   }
   componentWillReceiveProps (next) {
     if (!this.props.show && next.show) {
-      this.setState(
-        {
-          height: 0,
-          show: true,
-        },
-        this.measureHeight,
-      )
-    }
-    if (this.props.show && !next.show) {
-      this.measureHeight()
-    }
-  }
-  componentDidUpdate () {
-    this.measureHeight()
-  }
-  componentWillUnmount () {
-    if (this.stopMutationObserver) {
-      this.stopMutationObserver()
+      this.animateIn()
+    } else if (this.props.show && !next.show) {
+      this.animateOut()
     }
   }
   onTransitionEnd = () => {
-    const { show, unmountOnHide } = this.props
+    const { unmountOnHide, show } = this.props
     if (!show && unmountOnHide) {
       this.setState({
-        show: false,
+        mountContent: false,
+      })
+    }
+    if (show) {
+      this.setState({
+        height: 'auto',
       })
     }
   }
   getStyles = () => {
-    const {
-      show,
-      style,
-      transitionProperty,
-      duration,
-      easing,
-      minHeight,
-      height: maxHeight,
-    } = this.props
+    const { style, transitionProperty, duration, easing } = this.props
     const { height } = this.state
 
     const resolvedEasing = easings[easing] || easing || 'ease-out'
-    const resolvedHeight = maxHeight || height
 
-    const finalStyles = {
+    return {
       overflow: 'hidden',
       transitionProperty,
       transitionDuration: `${duration}ms`,
       transitionTimingFunction: `${resolvedEasing}`,
       ...style,
-      height: show ? `${resolvedHeight}px` : `${minHeight}px`,
+      height,
     }
-    return finalStyles
+  }
+  animateIn = () => {
+    const { minHeight, maxHeight } = this.props
+    this.setState(
+      {
+        height: `${minHeight || 0}px`,
+        mountContent: true,
+      },
+      () => {
+        const height = this.measureHeight()
+        this.setState({
+          height: `${maxHeight || height}px`,
+        })
+      },
+    )
+  }
+  animateOut = () => {
+    const { minHeight, maxHeight } = this.props
+    const minimize = () => {
+      window.setTimeout(() => {
+        if (this.el.style.height === 'auto') {
+          minimize()
+          return
+        }
+        this.setState({
+          height: `${minHeight || 0}px`,
+        })
+      }, 16)
+    }
+    if (this.el.style.height !== 'auto') {
+      minimize()
+    } else {
+      const height = this.measureHeight()
+      this.setState(
+        {
+          height: `${maxHeight || height}px`,
+        },
+        minimize,
+      )
+    }
   }
   handleRef = el => {
     this.el = el
@@ -160,14 +184,7 @@ export default class ReactShow extends React.Component {
       this.el.addEventListener(transitionEvent, this.onTransitionEnd)
     }
   }
-  measureHeight = () => {
-    const height = this.el ? this.el.scrollHeight : 0
-    if (this.state.height !== height) {
-      this.setState({
-        height,
-      })
-    }
-  }
+  measureHeight = () => (this.el ? this.el.scrollHeight : 0)
   render () {
     const {
       children,
@@ -182,8 +199,8 @@ export default class ReactShow extends React.Component {
       transitionOnMount,
       ...rest
     } = this.props
-    const { show } = this.state
-    return show ? (
+    const { mountContent } = this.state
+    return mountContent ? (
       <div ref={this.handleRef} style={this.getStyles()} {...rest}>
         {React.Children.only(children)}
       </div>
