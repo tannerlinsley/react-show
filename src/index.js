@@ -195,6 +195,7 @@ export default class ReactShow extends React.Component {
       transitionProperty,
       unmountOnHide,
       minHeight,
+      maxHeight,
       height,
       transitionOnMount,
       ...rest
