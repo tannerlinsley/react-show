@@ -64,7 +64,7 @@ const AdvancedExample = () => (
   <ReactShow
     show={true || false} // Toggle true or false to show or hide the content!
     duration={500} // // The duration of the transition
-    easing={ReactShow.easings.easeOutQuad}, // Comes with all the easings you could want!
+    easing={ReactShow.easings.easeOutQuad} // Comes with all the easings you could want!
     transitionProperty='height' // Add as many as you need! eg. 'height width' or 'all'!
     unmountOnHide={false} // Self explanatory. It unmounts the children when hidden
     minHeight={0} // If you need a min-height, go for it! Just don't set unmountOnHide to `true` ;)
