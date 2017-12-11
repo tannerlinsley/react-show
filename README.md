@@ -74,7 +74,7 @@ const AdvancedExample = () => (
       // Go ahead and throw in custom styles like you normally would.
       // Keep in mind though, `height` is controlled by `ReactShow` :)
       background: 'blue',
-      color:white
+      color: 'white'
     }}
     className='some-class-name or-not' // Works like any other standard component.
     // It even works with styled-components and glamorous!
