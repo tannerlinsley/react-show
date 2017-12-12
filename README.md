@@ -76,7 +76,7 @@ const DurationAndEasingExample = () => (
   <ReactShow
     show={true || false} // Toggle true or false to show or hide the content!
     duration={500} // // The duration of the transition in milliseconds
-    easing={ReactShow.easings.easeOutQuad}, // Comes with all the easings you could want!
+    easing={ReactShow.easings.easeOutQuad} // Comes with all the easings you could want!
   >
     Hello world!
   </ReactShow>
