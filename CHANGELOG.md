@@ -1,3 +1,16 @@
+# 2.0.0
+#### Features
+- You can now use the `styleShow` and `styleHide` props to define more than just height styles for the show/hide state of your content.
+- When using the new `styleShow` and `styleHide` props, `width` and `height` can be animated to their dynamic sizes by simply using `auto` as you would normally in css.
+
+#### Breaking Changes
+- The `minHeight` prop was deprecated in favor of `styleShow` and `styleHide`.
+- The `height` prop was deprecated in favor of `styleShow` and `styleHide`.
+
+#### Fixes & Optimizations
+- You can now pass any valid react node as children to `ReactShow`, including raw text.
+
+
 # 1.1.2
 #### Fixes & Optimizations
 - Fixed an issue where the module was not being built before being publish

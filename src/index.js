@@ -1,12 +1,13 @@
-/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-restricted-syntax, react/forbid-prop-types */
 import React from 'react'
 import PropTypes from 'prop-types'
+import RAF from 'raf'
 
 const transitionEvent = (() => {
   if (typeof document === 'undefined') {
     return
   }
-  const el = document.createElement('fakeelement')
+  const testElement = document.createElement('fakeelement')
   const transitions = {
     transition: 'transitionend',
     OTransition: 'oTransitionEnd',
@@ -16,7 +17,7 @@ const transitionEvent = (() => {
 
   /* eslint-disable no-restricted-syntax */
   for (const t in transitions) {
-    if (el.style[t] !== undefined) {
+    if (testElement && testElement.style && testElement.style[t] !== undefined) {
       return transitions[t]
     }
   }
@@ -71,9 +72,9 @@ export default class ReactShow extends React.Component {
     duration: PropTypes.number,
     transitionProperty: PropTypes.string,
     unmountOnHide: PropTypes.bool,
-    height: PropTypes.number,
-    minHeight: PropTypes.number,
-    maxHeight: PropTypes.number,
+    style: PropTypes.object,
+    styleHide: PropTypes.object,
+    styleShow: PropTypes.object,
     transitionOnMount: PropTypes.bool,
     children: PropTypes.node.isRequired,
   }
@@ -81,25 +82,31 @@ export default class ReactShow extends React.Component {
   static defaultProps = {
     show: false,
     easing: 'easeOutQuad',
-    duration: 500,
-    transitionProperty: 'height',
-    unmountOnHide: false,
-    minHeight: 0,
-    maxHeight: 0,
-    height: undefined,
+    duration: 300,
+    transitionProperty: 'all',
+    unmountOnHide: true,
     transitionOnMount: false,
-    style: {},
+    style: {
+      overflow: 'hidden',
+    },
+    styleHide: {
+      height: 0,
+    },
+    styleShow: {
+      height: 'auto',
+    },
   }
 
   constructor (props) {
     super(props)
     this.state = {
+      next: false,
       mountContent: props.show,
-      height: props.transitionOnMount ? '0px' : 'auto',
+      currentStyle: props.transitionOnMount || !props.show ? props.styleHide : props.styleShow,
     }
   }
   componentDidMount () {
-    if (this.props.show) {
+    if (this.props.transitionOnMount && this.props.show) {
       this.animateIn()
     }
   }
@@ -110,99 +117,150 @@ export default class ReactShow extends React.Component {
       this.animateOut()
     }
   }
+  componentDidUpdate () {
+    const { styleHide, styleShow } = this.props
+
+    if (this.state.next === 'show') {
+      let measurements = {}
+      // Only measure if we need to
+      if (this.stylePropIsAuto('width') || this.stylePropIsAuto('height')) {
+        measurements = this.measure()
+      }
+      this.setState({
+        next: 'auto',
+        currentStyle: {
+          ...styleShow,
+          // animate to computed width and height
+          ...(this.stylePropIsAuto('width') ? { width: `${measurements.width}px` } : {}),
+          ...(this.stylePropIsAuto('height') ? { height: `${measurements.height}px` } : {}),
+        },
+      })
+    }
+
+    if (this.state.next === 'hide') {
+      this.setState({
+        next: false,
+      })
+      const queueFinalHide = () => {
+        // If we still need to measure, delay a bit until element is ready.
+        // double RAF this to be sure that the browser has painted
+        RAF(() =>
+          RAF(() => {
+            if (this.checkNeedToMeasure()) {
+              if (this.checkIsAuto()) {
+                queueFinalHide()
+                return
+              }
+            }
+
+            if (!this.state.next) {
+              this.setState({
+                currentStyle: styleHide,
+              })
+            }
+          }),
+        )
+      }
+      queueFinalHide()
+    }
+  }
   onTransitionEnd = () => {
     const { unmountOnHide, show } = this.props
-    if (!show && unmountOnHide) {
+    if (!show && unmountOnHide && this.state.next === 'stable') {
       this.setState({
+        next: false,
         mountContent: false,
       })
     }
-    if (show) {
+    if (
+      show &&
+      this.state.next === 'auto' &&
+      (this.stylePropIsAuto('width') || this.stylePropIsAuto('height'))
+    ) {
+      const currentStyle = { ...this.state.currentStyle }
+      if (this.stylePropIsAuto('width')) {
+        currentStyle.width = 'auto'
+      }
+      if (this.stylePropIsAuto('height')) {
+        currentStyle.height = 'auto'
+      }
       this.setState({
-        height: 'auto',
+        next: false,
+        currentStyle,
       })
     }
   }
-  getStyles = () => {
+  animateIn = () => {
+    this.setState({
+      next: 'show',
+      mountContent: true,
+    })
+  }
+  animateOut = () => {
+    // If we need to animate 'auto' values, measure first
+    const measurements = this.checkNeedToMeasure() ? this.measure() : {}
+    this.setState({
+      next: 'hide',
+      currentStyle: {
+        ...this.state.currentStyle,
+        ...(this.stylePropIsAuto('width') ? { width: `${measurements.width}px` } : {}),
+        ...(this.stylePropIsAuto('height') ? { height: `${measurements.height}px` } : {}),
+      },
+    })
+  }
+  handleRef = el => {
+    this.el = el
+    if (this.el && !this.isListening) {
+      this.el.addEventListener(transitionEvent, this.onTransitionEnd)
+    }
+  }
+  checkNeedToMeasure = () => this.stylePropIsAuto('height') || this.stylePropIsAuto('width')
+  checkIsAuto = () =>
+    (this.stylePropIsAuto('height') && this.el && this.el.style.height === 'auto') ||
+    (this.stylePropIsAuto('width') && this.el && this.el.style.width === 'auto')
+  stylePropIsAuto = prop => this.props.styleShow[prop] === 'auto'
+  measure = () => {
+    if (!this.el) {
+      return {}
+    }
+    return {
+      width: this.el.scrollWidth,
+      height: this.el.scrollHeight,
+    }
+  }
+  makeStyles = () => {
     const { style, transitionProperty, duration, easing } = this.props
-    const { height } = this.state
+    const { currentStyle } = this.state
 
     const resolvedEasing = easings[easing] || easing || 'ease-out'
 
     return {
-      overflow: 'hidden',
       transitionProperty,
       transitionDuration: `${duration}ms`,
       transitionTimingFunction: `${resolvedEasing}`,
       ...style,
-      height,
+      ...currentStyle,
     }
   }
-  animateIn = () => {
-    const { minHeight, maxHeight } = this.props
-    this.setState(
-      {
-        height: `${minHeight || 0}px`,
-        mountContent: true,
-      },
-      () => {
-        const height = this.measureHeight()
-        this.setState({
-          height: `${maxHeight || height}px`,
-        })
-      },
-    )
-  }
-  animateOut = () => {
-    const { minHeight, maxHeight } = this.props
-    const minimize = () => {
-      window.setTimeout(() => {
-        if (this.el.style.height === 'auto') {
-          minimize()
-          return
-        }
-        this.setState({
-          height: `${minHeight || 0}px`,
-        })
-      }, 16)
-    }
-    if (this.el.style.height !== 'auto') {
-      minimize()
-    } else {
-      const height = this.measureHeight()
-      this.setState(
-        {
-          height: `${maxHeight || height}px`,
-        },
-        minimize,
-      )
-    }
-  }
-  handleRef = el => {
-    this.el = el
-    if (this.el) {
-      this.el.addEventListener(transitionEvent, this.onTransitionEnd)
-    }
-  }
-  measureHeight = () => (this.el ? this.el.scrollHeight : 0)
   render () {
     const {
       children,
-      style,
       show: originalShow,
       easing,
       duration,
       transitionProperty,
       unmountOnHide,
-      minHeight,
-      height,
       transitionOnMount,
+      show,
+      style,
+      styleHide,
+      styleShow,
       ...rest
     } = this.props
     const { mountContent } = this.state
     return mountContent ? (
-      <div ref={this.handleRef} style={this.getStyles()} {...rest}>
-        {React.Children.only(children)}
+      <div ref={this.handleRef} style={this.makeStyles()} {...rest}>
+        {children}
       </div>
     ) : null
   }

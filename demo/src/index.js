@@ -18,28 +18,48 @@ injectGlobal`
 const Container = styled.div`padding: 2rem;`
 
 const BlockOne = styled.div`
-  height: 5rem;
-  background: #e44400;
+  height: 2rem;
+  background: rgb(41, 41, 41);
 `
 const BlockTwo = styled.div`
-  background: #de6d04;
+  background: rgb(102, 102, 102);
   padding: 1rem;
   color: white;
 `
 const BlockThree = styled.div`
-  height: 5rem;
-  background: #ecc004;
+  height: 2rem;
+  background: rgb(41, 41, 41);
 `
 
 export default class Demo extends Component {
   state = {
     show: true,
+    axis: 'y',
     showSecondary: false,
     duration: 500,
     easing: 'easeOutQuint',
-    unmountOnHide: false,
-    minHeight: 0,
-    height: undefined,
+    unmountOnHide: true,
+    style: JSON.stringify(
+      {
+        overflow: 'hidden',
+      },
+      null,
+      2,
+    ),
+    styleHide: JSON.stringify(
+      {
+        height: 0,
+      },
+      null,
+      2,
+    ),
+    styleShow: JSON.stringify(
+      {
+        height: 'auto',
+      },
+      null,
+      2,
+    ),
     extraItems: [],
   }
   render () {
@@ -49,10 +69,77 @@ export default class Demo extends Component {
       duration,
       easing,
       unmountOnHide,
-      minHeight,
-      height,
+      style,
+      styleHide,
+      styleShow,
       extraItems,
     } = this.state
+
+    const computeStyle = s => {
+      try {
+        return JSON.parse(s) // eslint-disable-line no-eval
+      } catch (err) {
+        console.warn(err)
+        return {}
+      }
+    }
+
+    const demoInstance = (
+      <div>
+        <BlockOne />
+        <ReactShow
+          show={show}
+          easing={easing}
+          duration={duration}
+          unmountOnHide={unmountOnHide}
+          style={computeStyle(style)}
+          styleHide={computeStyle(styleHide)}
+          styleShow={computeStyle(styleShow)}
+        >
+          <BlockTwo>
+            This is some content!
+            <br />
+            This is some more content!
+            <br />
+            Even more content!
+            <br />
+            <div>
+              {extraItems.map((d, i) => (
+                <div key={i}>
+                  Even more content!<br />
+                </div>
+              ))}
+            </div>
+            <ReactShow
+              show={showSecondary}
+              easing={easing}
+              duration={duration}
+              unmountOnHide={unmountOnHide}
+              styleHide={computeStyle(styleHide)}
+              styleShow={computeStyle(styleShow)}
+            >
+              <div>
+                <br />
+                <div>Second</div>
+                <div>Level</div>
+                <div>Content</div>
+                <div>Goes</div>
+                <div>Here</div>
+                <div>
+                  {extraItems.map((d, i) => (
+                    <div key={i}>
+                      Even more content!<br />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </ReactShow>
+          </BlockTwo>
+        </ReactShow>
+        <BlockThree />
+      </div>
+    )
+
     return (
       <Container>
         <table>
@@ -97,35 +184,52 @@ export default class Demo extends Component {
               </td>
             </tr>
             <tr>
-              <td>height</td>
+              <td>style</td>
               <td>
-                <input
-                  type="number"
-                  value={height}
+                <textarea
+                  value={style}
                   onChange={e => {
                     this.setState({
-                      height: e.target.value,
+                      style: e.target.value,
                     })
                   }}
                   style={{
-                    width: '2rem',
+                    width: '10rem',
+                    height: '4rem',
                   }}
                 />
               </td>
             </tr>
             <tr>
-              <td>minHeight</td>
+              <td>styleHide</td>
               <td>
-                <input
-                  type="number"
-                  value={minHeight}
+                <textarea
+                  value={styleHide}
                   onChange={e => {
                     this.setState({
-                      minHeight: e.target.value,
+                      styleHide: e.target.value,
                     })
                   }}
                   style={{
-                    width: '2rem',
+                    width: '10rem',
+                    height: '4rem',
+                  }}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>styleShow</td>
+              <td>
+                <textarea
+                  value={styleShow}
+                  onChange={e => {
+                    this.setState({
+                      styleShow: e.target.value,
+                    })
+                  }}
+                  style={{
+                    width: '10rem',
+                    height: '4rem',
                   }}
                 />
               </td>
@@ -185,46 +289,8 @@ export default class Demo extends Component {
         <br />
         <br />
 
-        <BlockOne />
-        <ReactShow
-          show={show}
-          easing={easing}
-          duration={duration}
-          unmountOnHide={unmountOnHide}
-          minHeight={minHeight}
-          height={height}
-        >
-          <BlockTwo>
-            This is some content!
-            <br />
-            This is some more content!
-            <br />
-            Even more content!
-            <br />
-            <div>
-              {extraItems.map((d, i) => (
-                <div key={i}>
-                  Even more content!<br />
-                </div>
-              ))}
-            </div>
-            <ReactShow
-              show={showSecondary}
-              easing={easing}
-              duration={duration}
-              unmountOnHide={unmountOnHide}
-            >
-              <div>
-                <div>Second</div>
-                <div>Level</div>
-                <div>Content</div>
-                <div>Goes</div>
-                <div>Here</div>
-              </div>
-            </ReactShow>
-          </BlockTwo>
-        </ReactShow>
-        <BlockThree />
+        {demoInstance}
+        {demoInstance}
       </Container>
     )
   }
