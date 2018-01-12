@@ -1,10 +1,15 @@
 {
   "name": "react-show",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "react-show React component",
   "main": "lib/index.js",
   "module": "es/index.js",
-  "files": ["css", "es", "lib", "umd"],
+  "files": [
+    "css",
+    "es",
+    "lib",
+    "umd"
+  ],
   "scripts": {
     "build": "nwb build-react-component",
     "clean": "nwb clean-module && nwb clean-demo",
@@ -30,7 +35,14 @@
   "homepage": "",
   "license": "MIT",
   "repository": "",
-  "keywords": ["react-show", "ng-show", "react", "appear", "hide", "collapse"],
+  "keywords": [
+    "react-show",
+    "ng-show",
+    "react",
+    "appear",
+    "hide",
+    "collapse"
+  ],
   "dependencies": {
     "raf": "^3.4.0"
   }
