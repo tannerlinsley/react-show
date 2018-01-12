@@ -126,14 +126,16 @@ export default class ReactShow extends React.Component {
       if (this.stylePropIsAuto('width') || this.stylePropIsAuto('height')) {
         measurements = this.measure()
       }
-      this.setState({
-        next: 'auto',
-        currentStyle: {
-          ...styleShow,
-          // animate to computed width and height
-          ...(this.stylePropIsAuto('width') ? { width: `${measurements.width}px` } : {}),
-          ...(this.stylePropIsAuto('height') ? { height: `${measurements.height}px` } : {}),
-        },
+      RAF(() => {
+        this.setState({
+          next: 'auto',
+          currentStyle: {
+            ...styleShow,
+            // animate to computed width and height
+            ...(this.stylePropIsAuto('width') ? { width: `${measurements.width}px` } : {}),
+            ...(this.stylePropIsAuto('height') ? { height: `${measurements.height}px` } : {}),
+          },
+        })
       })
     }
 
@@ -195,9 +197,13 @@ export default class ReactShow extends React.Component {
     }
   }
   animateIn = () => {
+    const { styleHide } = this.props
+    const { currentStyle, mountContent } = this.state
+
     this.setState({
       next: 'show',
       mountContent: true,
+      currentStyle: mountContent ? currentStyle : styleHide,
     })
   }
   animateOut = () => {
