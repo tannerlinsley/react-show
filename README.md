@@ -119,7 +119,7 @@ The default export and main component for React-Show.
 | `duration`           	|          	| `300`          	            | The `transition-duration` of the transition used to show the content        	|
 | `easing`             	|          	| `easeOutQuint` 	            | The `transition-timing-function` used to show the content                   	|
 | `transitionProperty` 	|          	| `all`       	              |      The `transition-property` used to show the content                      |
-| `unmountOnHide`      	|          	| `false`        	            | Determines whether the children will be unmounted when not visible.         	|
+| `unmountOnHide`      	|          	| `true`        	            | Determines whether the children will be unmounted when not visible.         	|
 | `transitionOnMount`  	|          	| `false`        	            | Determines whether to animate from a hidden to a shown state on mount       	|
 | `styleHide`          	|          	| `{ height: '0px' }`         | The standard react style object used to show the element                      |
 | `styleShow`          	|          	| `{ height: 'auto' }`        | The standard react style object used to hide the element                     	|
