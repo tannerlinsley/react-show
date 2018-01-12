@@ -166,7 +166,7 @@ export default class ReactShow extends React.Component {
   }
   onTransitionEnd = () => {
     const { unmountOnHide, show } = this.props
-    if (!show && unmountOnHide && this.state.next === 'stable') {
+    if (!show && unmountOnHide && !this.state.next) {
       this.setState({
         next: false,
         mountContent: false,
