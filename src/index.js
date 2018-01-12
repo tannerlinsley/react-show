@@ -164,7 +164,11 @@ export default class ReactShow extends React.Component {
       queueFinalHide()
     }
   }
-  onTransitionEnd = () => {
+  onTransitionEnd = e => {
+    e.persist()
+    if (e.target !== this.el) {
+      return
+    }
     const { unmountOnHide, show } = this.props
     if (!show && unmountOnHide && !this.state.next) {
       this.setState({
@@ -208,16 +212,13 @@ export default class ReactShow extends React.Component {
       },
     })
   }
-  handleRef = el => {
-    this.el = el
-    if (this.el && !this.isListening) {
-      this.el.addEventListener(transitionEvent, this.onTransitionEnd)
-    }
-  }
   checkNeedToMeasure = () => this.stylePropIsAuto('height') || this.stylePropIsAuto('width')
   checkIsAuto = () =>
     (this.stylePropIsAuto('height') && this.el && this.el.style.height === 'auto') ||
     (this.stylePropIsAuto('width') && this.el && this.el.style.width === 'auto')
+  handleRef = el => {
+    this.el = el
+  }
   stylePropIsAuto = prop => this.props.styleShow[prop] === 'auto'
   measure = () => {
     if (!this.el) {
@@ -259,7 +260,12 @@ export default class ReactShow extends React.Component {
     } = this.props
     const { mountContent } = this.state
     return mountContent ? (
-      <div ref={this.handleRef} style={this.makeStyles()} {...rest}>
+      <div
+        ref={this.handleRef}
+        onTransitionEnd={this.onTransitionEnd}
+        style={this.makeStyles()}
+        {...rest}
+      >
         {children}
       </div>
     ) : null
