@@ -39,13 +39,7 @@ export default class Demo extends Component {
     duration: 500,
     easing: 'easeOutQuint',
     unmountOnHide: true,
-    style: JSON.stringify(
-      {
-        overflow: 'hidden',
-      },
-      null,
-      2,
-    ),
+    style: JSON.stringify({}, null, 2),
     styleHide: JSON.stringify(
       {
         height: 0,

@@ -86,9 +86,7 @@ export default class ReactShow extends React.Component {
     transitionProperty: 'all',
     unmountOnHide: true,
     transitionOnMount: false,
-    style: {
-      overflow: 'hidden',
-    },
+    style: {},
     styleHide: {
       height: 0,
     },
@@ -123,7 +121,8 @@ export default class ReactShow extends React.Component {
     if (this.state.next === 'show') {
       let measurements = {}
       // Only measure if we need to
-      if (this.stylePropIsAuto('width') || this.stylePropIsAuto('height')) {
+      const isAuto = this.stylePropIsAuto('width') || this.stylePropIsAuto('height')
+      if (isAuto) {
         measurements = this.measure()
       }
       RAF(() => {
@@ -134,6 +133,11 @@ export default class ReactShow extends React.Component {
             // animate to computed width and height
             ...(this.stylePropIsAuto('width') ? { width: `${measurements.width}px` } : {}),
             ...(this.stylePropIsAuto('height') ? { height: `${measurements.height}px` } : {}),
+            ...(isAuto
+              ? {
+                overflow: 'hidden',
+              }
+              : {}),
           },
         })
       })
@@ -155,9 +159,18 @@ export default class ReactShow extends React.Component {
               }
             }
 
+            const isAuto = this.stylePropIsAuto('width') || this.stylePropIsAuto('height')
             if (!this.state.next) {
               this.setState({
-                currentStyle: styleHide,
+                next: 'hidden',
+                currentStyle: {
+                  ...styleHide,
+                  ...(isAuto
+                    ? {
+                      overflow: 'hidden',
+                    }
+                    : {}),
+                },
               })
             }
           }),
@@ -171,24 +184,24 @@ export default class ReactShow extends React.Component {
     if (e.target !== this.el) {
       return
     }
-    const { unmountOnHide, show } = this.props
-    if (!show && unmountOnHide && !this.state.next) {
+    const { unmountOnHide, show, styleShow, styleHide } = this.props
+    if (this.state.next === 'hidden' && unmountOnHide) {
       this.setState({
         next: false,
         mountContent: false,
       })
     }
-    if (
-      show &&
-      this.state.next === 'auto' &&
-      (this.stylePropIsAuto('width') || this.stylePropIsAuto('height'))
-    ) {
-      const currentStyle = { ...this.state.currentStyle }
+    const isAuto = this.stylePropIsAuto('width') || this.stylePropIsAuto('height')
+    if (this.state.next === 'auto') {
+      const currentStyle = show ? { ...styleShow } : { ...styleHide }
       if (this.stylePropIsAuto('width')) {
         currentStyle.width = 'auto'
       }
       if (this.stylePropIsAuto('height')) {
         currentStyle.height = 'auto'
+      }
+      if (isAuto && !show) {
+        currentStyle.overflow = 'hidden'
       }
       this.setState({
         next: false,
@@ -200,21 +213,33 @@ export default class ReactShow extends React.Component {
     const { styleHide } = this.props
     const { currentStyle, mountContent } = this.state
 
+    const nextStyle = mountContent ? { ...currentStyle } : { ...styleHide }
+
+    if (this.stylePropIsAuto('width') || this.stylePropIsAuto('height')) {
+      nextStyle.overflow = 'hidden'
+    }
+
     this.setState({
       next: 'show',
       mountContent: true,
-      currentStyle: mountContent ? currentStyle : styleHide,
+      currentStyle: nextStyle,
     })
   }
   animateOut = () => {
     // If we need to animate 'auto' values, measure first
     const measurements = this.checkNeedToMeasure() ? this.measure() : {}
+    const isAuto = this.stylePropIsAuto('width') || this.stylePropIsAuto('height')
     this.setState({
       next: 'hide',
       currentStyle: {
         ...this.state.currentStyle,
         ...(this.stylePropIsAuto('width') ? { width: `${measurements.width}px` } : {}),
         ...(this.stylePropIsAuto('height') ? { height: `${measurements.height}px` } : {}),
+        ...(isAuto
+          ? {
+            overflow: 'hidden',
+          }
+          : {}),
       },
     })
   }
