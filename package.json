@@ -34,7 +34,10 @@
   "author": "",
   "homepage": "",
   "license": "MIT",
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/react-tools/react-show.git"
+  },
   "keywords": [
     "react-show",
     "ng-show",
