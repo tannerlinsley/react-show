@@ -5,6 +5,14 @@
   "main": "lib/index.js",
   "module": "es/index.js",
   "files": ["css", "es", "lib", "umd"],
+  "author": "Tanner Linsley <tannerlinsley@gmail.com>",
+  "homepage": "https://react-show.js.org",
+  "license": "MIT",
+  "keywords": ["react-show", "ng-show", "react", "appear", "hide", "collapse"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/react-tools/react-show.git"
+  },
   "scripts": {
     "build": "nwb build-react-component",
     "clean": "nwb clean-module && nwb clean-demo",
@@ -30,11 +38,6 @@
     "react-dom": "^15.6.1 || 16",
     "styled-components": "^2.2.3"
   },
-  "author": "",
-  "homepage": "",
-  "license": "MIT",
-  "repository": "",
-  "keywords": ["react-show", "ng-show", "react", "appear", "hide", "collapse"],
   "dependencies": {
     "babel-plugin-source": "^0.0.2",
     "babel-preset-env": "^1.7.0",
