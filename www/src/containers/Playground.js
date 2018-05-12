@@ -1,28 +1,22 @@
-import React, { Component } from 'react'
-import { render } from 'react-dom'
-import styled, { injectGlobal } from 'styled-components'
+import React from 'react'
+import { SiteData, RouteData, Head } from 'react-static'
+import { Code } from 'react-smackdown'
+import styled from 'styled-components'
+//
 
-import ReactShow from '../../src'
+import Sidebar from 'components/Sidebar'
 
-injectGlobal`
-  * { box-sizing: border-box; }
-  html, body, #demo {
-    font-size: 16px;
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-  }
+import { Animate } from '../../../src'
+
+const Container = styled.div`
+  padding: 2rem;
 `
-
-const Container = styled.div`padding: 2rem;`
 
 const BlockOne = styled.div`
   height: 2rem;
   background: rgb(41, 41, 41);
 `
 const BlockTwo = styled.div`
-  background: rgb(102, 102, 102);
   padding: 1rem;
   color: white;
 `
@@ -31,41 +25,73 @@ const BlockThree = styled.div`
   background: rgb(41, 41, 41);
 `
 
-export default class Demo extends Component {
+let Source
+
+// @source Source
+class Demo extends React.Component {
   state = {
+    mount: true,
     show: true,
-    axis: 'y',
     showSecondary: false,
-    duration: 500,
+    duration: 1000,
     easing: 'easeOutQuint',
     unmountOnHide: true,
-    style: JSON.stringify({}, null, 2),
-    styleHide: JSON.stringify(
+    transitionOnMount: true,
+    start: JSON.stringify(
       {
+        transform: 'scale(0.5)',
+        opacity: 0,
         height: 0,
+        background: 'green',
       },
       null,
-      2,
+      2
     ),
-    styleShow: JSON.stringify(
+    enter: JSON.stringify(
       {
+        transform: 'scale(1)',
+        opacity: 1,
         height: 'auto',
+        background: 'teal',
       },
       null,
-      2,
+      2
+    ),
+    update: JSON.stringify(
+      {
+        transform: 'scale(1)',
+        opacity: 1,
+        height: 'auto',
+        background: 'gray',
+      },
+      null,
+      2
+    ),
+    leave: JSON.stringify(
+      {
+        transform: 'scale(1)',
+        opacity: 1,
+        height: 0,
+        background: 'red',
+      },
+      null,
+      2
     ),
     extraItems: [],
   }
   render () {
     const {
+      mount,
       show,
       showSecondary,
       duration,
       easing,
       unmountOnHide,
-      style,
-      styleHide,
-      styleShow,
+      transitionOnMount,
+      start,
+      enter,
+      update,
+      leave,
       extraItems,
     } = this.state
 
@@ -78,17 +104,19 @@ export default class Demo extends Component {
       }
     }
 
-    const demoInstance = (
+    const demoInstance = mount ? (
       <div>
         <BlockOne />
-        <ReactShow
+        <Animate
           show={show}
           easing={easing}
           duration={duration}
           unmountOnHide={unmountOnHide}
-          style={computeStyle(style)}
-          styleHide={computeStyle(styleHide)}
-          styleShow={computeStyle(styleShow)}
+          transitionOnMount={transitionOnMount}
+          start={computeStyle(start)}
+          enter={computeStyle(enter)}
+          update={computeStyle(update)}
+          leave={computeStyle(leave)}
         >
           <BlockTwo>
             This is some content!
@@ -104,13 +132,15 @@ export default class Demo extends Component {
                 </div>
               ))}
             </div>
-            <ReactShow
+            <Animate
               show={showSecondary}
               easing={easing}
               duration={duration}
-              unmountOnHide={unmountOnHide}
-              styleHide={computeStyle(styleHide)}
-              styleShow={computeStyle(styleShow)}
+              transitionOnMount={transitionOnMount}
+              start={computeStyle(start)}
+              leave={computeStyle(leave)}
+              update={computeStyle(update)}
+              enter={computeStyle(enter)}
             >
               <div>
                 <br />
@@ -127,12 +157,12 @@ export default class Demo extends Component {
                   ))}
                 </div>
               </div>
-            </ReactShow>
+            </Animate>
           </BlockTwo>
-        </ReactShow>
+        </Animate>
         <BlockThree />
       </div>
-    )
+    ) : null
 
     return (
       <Container>
@@ -169,7 +199,7 @@ export default class Demo extends Component {
                     width: '8rem',
                   }}
                 >
-                  {Object.keys(ReactShow.easings).map(d => (
+                  {Object.keys(Animate.easings).map(d => (
                     <option key={d} value={d}>
                       {d}
                     </option>
@@ -178,13 +208,13 @@ export default class Demo extends Component {
               </td>
             </tr>
             <tr>
-              <td>style</td>
+              <td>start</td>
               <td>
                 <textarea
-                  value={style}
+                  value={start}
                   onChange={e => {
                     this.setState({
-                      style: e.target.value,
+                      start: e.target.value,
                     })
                   }}
                   style={{
@@ -195,13 +225,13 @@ export default class Demo extends Component {
               </td>
             </tr>
             <tr>
-              <td>styleHide</td>
+              <td>enter</td>
               <td>
                 <textarea
-                  value={styleHide}
+                  value={enter}
                   onChange={e => {
                     this.setState({
-                      styleHide: e.target.value,
+                      enter: e.target.value,
                     })
                   }}
                   style={{
@@ -212,13 +242,30 @@ export default class Demo extends Component {
               </td>
             </tr>
             <tr>
-              <td>styleShow</td>
+              <td>update</td>
               <td>
                 <textarea
-                  value={styleShow}
+                  value={update}
                   onChange={e => {
                     this.setState({
-                      styleShow: e.target.value,
+                      update: e.target.value,
+                    })
+                  }}
+                  style={{
+                    width: '10rem',
+                    height: '4rem',
+                  }}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>leave</td>
+              <td>
+                <textarea
+                  value={leave}
+                  onChange={e => {
+                    this.setState({
+                      leave: e.target.value,
                     })
                   }}
                   style={{
@@ -250,6 +297,28 @@ export default class Demo extends Component {
                 </select>
               </td>
             </tr>
+            <tr>
+              <td>transitionOnMount</td>
+              <td>
+                <select
+                  value={transitionOnMount}
+                  onChange={e => {
+                    this.setState({
+                      transitionOnMount: e.target.value === 'true',
+                    })
+                  }}
+                  style={{
+                    width: '4rem',
+                  }}
+                >
+                  {['true', 'false'].map(d => (
+                    <option key={d} value={d}>
+                      {d.toString()}
+                    </option>
+                  ))}
+                </select>
+              </td>
+            </tr>
           </tbody>
         </table>
 
@@ -259,7 +328,8 @@ export default class Demo extends Component {
           onClick={() =>
             this.setState({
               show: !show,
-            })}
+            })
+          }
         >
           {show ? 'Hide' : 'Show'}
         </button>
@@ -267,7 +337,8 @@ export default class Demo extends Component {
           onClick={() =>
             this.setState({
               showSecondary: !showSecondary,
-            })}
+            })
+          }
         >
           {showSecondary ? 'Hide Secondary' : 'Show Secondary'}
         </button>
@@ -275,9 +346,19 @@ export default class Demo extends Component {
           onClick={() =>
             this.setState({
               extraItems: [...extraItems, ''],
-            })}
+            })
+          }
         >
           Add content
+        </button>
+        <button
+          onClick={() =>
+            this.setState({
+              mount: !mount,
+            })
+          }
+        >
+          {show ? 'Unmount' : 'Mount'}
         </button>
 
         <br />
@@ -285,9 +366,38 @@ export default class Demo extends Component {
 
         {demoInstance}
         {demoInstance}
+        {demoInstance}
       </Container>
     )
   }
 }
+// @source Source
 
-render(<Demo />, document.querySelector('#demo'))
+const Doc = () => (
+  <SiteData
+    render={({ repoName }) => (
+      <RouteData
+        render={({ editPath, title }) => (
+          <Sidebar>
+            <Head>
+              <title>{`${title} | ${repoName}`}</title>
+            </Head>
+            <Demo />
+            <Code
+              source={Source}
+              langauge="javascript"
+              style={{
+                maxHeight: '400px',
+              }}
+            />
+            <div>
+              <a href={editPath}>Edit this page on Github</a>
+            </div>
+          </Sidebar>
+        )}
+      />
+    )}
+  />
+)
+
+export default Doc

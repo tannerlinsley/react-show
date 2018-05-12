@@ -3,26 +3,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import RAF from 'raf'
 
-const transitionEvent = (() => {
-  if (typeof document === 'undefined') {
-    return
-  }
-  const testElement = document.createElement('fakeelement')
-  const transitions = {
-    transition: 'transitionend',
-    OTransition: 'oTransitionEnd',
-    MozTransition: 'transitionend',
-    WebkitTransition: 'webkitTransitionEnd',
-  }
-
-  /* eslint-disable no-restricted-syntax */
-  for (const t in transitions) {
-    if (testElement && testElement.style && testElement.style[t] !== undefined) {
-      return transitions[t]
-    }
-  }
-})()
-
 const easings = {
   // Cubic
   easeInCubic: 'cubic-bezier(0.550, 0.055, 0.675, 0.190)',
@@ -65,192 +45,243 @@ const easings = {
   easeInOutBack: 'cubic-bezier(0.680, -0.550, 0.265, 1.550)',
 }
 
-export default class ReactShow extends React.Component {
+export class Animate extends React.Component {
   static easings = easings
   static propTypes = {
+    component: PropTypes.string,
+    show: PropTypes.bool,
     easing: PropTypes.string,
     duration: PropTypes.number,
     transitionProperty: PropTypes.string,
     unmountOnHide: PropTypes.bool,
     style: PropTypes.object,
-    styleHide: PropTypes.object,
-    styleShow: PropTypes.object,
+    start: PropTypes.object,
+    enter: PropTypes.object,
+    update: PropTypes.object,
+    leave: PropTypes.object,
+    onFinish: PropTypes.func,
     transitionOnMount: PropTypes.bool,
     children: PropTypes.node.isRequired,
   }
 
   static defaultProps = {
-    show: false,
+    component: 'div',
+    show: true,
     easing: 'easeOutQuad',
     duration: 300,
     transitionProperty: 'all',
     unmountOnHide: true,
-    transitionOnMount: false,
-    style: {},
-    styleHide: {
-      height: 0,
-    },
-    styleShow: {
-      height: 'auto',
-    },
+    transitionOnMount: true,
+    style: undefined,
+    start: undefined,
+    enter: undefined,
+    update: undefined,
+    leave: undefined,
+    onFinish: () => {},
   }
 
   constructor (props) {
     super(props)
+    const {
+      show, transitionOnMount, start, update, enter,
+    } = this.props
+
+    this.stage = false
+    this.stageStyles = {}
+    this.transitioning = false
+
     this.state = {
-      next: false,
-      mountContent: props.show,
-      currentStyle: props.transitionOnMount || !props.show ? props.styleHide : props.styleShow,
+      mountContent: show,
+      currentStyle: transitionOnMount ? start || update : update || enter,
+      styleOverrides: {},
     }
   }
   componentDidMount () {
-    if (this.props.transitionOnMount && this.props.show) {
-      this.animateIn()
+    const {
+      transitionOnMount, show, enter, update,
+    } = this.props
+    if (transitionOnMount && show) {
+      this.transition('enter', enter || update)
     }
   }
-  componentWillReceiveProps (next) {
-    if (!this.props.show && next.show) {
-      this.animateIn()
-    } else if (this.props.show && !next.show) {
-      this.animateOut()
-    }
-  }
-  componentDidUpdate () {
-    const { styleHide, styleShow } = this.props
+  componentDidUpdate (oldProps) {
+    const {
+      show, update, enter, leave, start,
+    } = this.props
+    const { mountContent } = this.state
 
-    if (this.state.next === 'show') {
-      let measurements = {}
-      // Only measure if we need to
-      const isAuto = this.stylePropIsAuto('width') || this.stylePropIsAuto('height')
-      if (isAuto) {
-        measurements = this.measure()
-      }
-      RAF(() => {
+    if (!oldProps.show && show) {
+      if (mountContent && this.stage === 'leave') {
+        return this.transition('update', update || enter)
+      } else if (!mountContent) {
+        // eslint-disable-next-line
         this.setState({
-          next: 'auto',
-          currentStyle: {
-            ...styleShow,
-            // animate to computed width and height
-            ...(this.stylePropIsAuto('width') ? { width: `${measurements.width}px` } : {}),
-            ...(this.stylePropIsAuto('height') ? { height: `${measurements.height}px` } : {}),
-            ...(isAuto
-              ? {
-                overflow: 'hidden',
+          currentStyle: start || update,
+        })
+      }
+      return this.transition('enter', enter || update)
+    }
+
+    if (oldProps.show && !show) {
+      return this.transition('leave', leave || start)
+    }
+
+    if ((!this.stage || this.stage === 'update') && show && update) {
+      const shouldUpdate = Object.keys(update).some(key => this.stageStyles[key] !== update[key])
+
+      if (shouldUpdate) {
+        return this.transition('update', update)
+      }
+    }
+  }
+  ensureMounted = () =>
+    new Promise(resolve => {
+      const check = () => {
+        if (this.el) {
+          return resolve()
+        }
+        RAF(() => {
+          this.setState(
+            {
+              mountContent: true,
+            },
+            check
+          )
+        })
+      }
+      check()
+    })
+  ensureStyles = styles =>
+    new Promise(resolve => {
+      const check = () =>
+        this.setState(
+          () => ({
+            styleOverrides: styles,
+          }),
+          () => {
+            RAF(() => {
+              if (Object.keys(styles).some(key => !this.el || this.el.style[key] !== styles[key])) {
+                return check()
               }
-              : {}),
-          },
+              resolve()
+            })
+          }
+        )
+      check()
+    })
+  transition = (stage, styles) => {
+    if (!styles) {
+      throw new Error(`ReactShow: No styles were resolved for the "${stage}" prop!`)
+    }
+
+    const { show } = this.props
+    const { currentStyle } = this.state
+
+    this.stage = stage
+    this.stageStyles = styles
+    this.transitioning = true
+
+    let wasAutoWidth
+    let wasAutoHeight
+    let isAutoChanged
+
+    return Promise.resolve()
+      .then(() => {
+        if (show) {
+          return this.ensureMounted()
+        }
+      })
+      .then(() => {
+        wasAutoWidth = this.isProp(currentStyle, 'width', 'auto')
+        wasAutoHeight = this.isProp(currentStyle, 'height', 'auto')
+        const isAutoWidth = this.isProp(styles, 'width', 'auto')
+        const isAutoHeight = this.isProp(styles, 'height', 'auto')
+
+        const isAutoWidthChanged = wasAutoWidth !== isAutoWidth
+        const isAutoHeightChanged = wasAutoHeight !== isAutoHeight
+        isAutoChanged = isAutoWidthChanged || isAutoHeightChanged
+
+        let measurements
+
+        if (isAutoChanged) {
+          measurements = this.measure()
+          this.setState({
+            styleOverrides: {
+              overflow: 'hidden',
+              ...(isAutoWidthChanged ? { width: `${measurements.width}px` } : {}),
+              ...(isAutoHeightChanged ? { height: `${measurements.height}px` } : {}),
+            },
+          })
+          return this.ensureStyles({
+            overflow: 'hidden',
+            ...(isAutoWidthChanged ? { width: `${measurements.width}px` } : {}),
+            ...(isAutoHeightChanged ? { height: `${measurements.height}px` } : {}),
+          })
+        }
+
+        this.setState({
+          styleOverrides: {},
         })
       })
-    }
+      .then(() => {
+        RAF(() => {
+          this.setState(({ currentStyle, styleOverrides }) => {
+            const nextStyle = {
+              ...currentStyle,
+              ...styles,
+            }
 
-    if (this.state.next === 'hide') {
-      this.setState({
-        next: false,
+            return {
+              // stage,
+              mountContent: true,
+              currentStyle: nextStyle,
+              styleOverrides: isAutoChanged
+                ? {
+                  ...styleOverrides,
+                  ...(wasAutoWidth ? { width: nextStyle.width } : {}),
+                  ...(wasAutoHeight ? { height: nextStyle.height } : {}),
+                }
+                : {},
+            }
+          })
+        })
       })
-      const queueFinalHide = () => {
-        // If we still need to measure, delay a bit until element is ready.
-        // double RAF this to be sure that the browser has painted
-        RAF(() =>
-          RAF(() => {
-            if (this.checkNeedToMeasure()) {
-              if (this.checkIsAuto()) {
-                queueFinalHide()
-                return
-              }
-            }
-
-            const isAuto = this.stylePropIsAuto('width') || this.stylePropIsAuto('height')
-            if (!this.state.next) {
-              this.setState({
-                next: 'hidden',
-                currentStyle: {
-                  ...styleHide,
-                  ...(isAuto
-                    ? {
-                      overflow: 'hidden',
-                    }
-                    : {}),
-                },
-              })
-            }
-          }),
-        )
-      }
-      queueFinalHide()
-    }
   }
-  onTransitionEnd = e => {
+  transitionEnd = e => {
+    const { unmountOnHide, onFinish } = this.props
+
     e.persist()
+
+    // Only handle transitionEnd for this element
     if (e.target !== this.el) {
       return
     }
-    const { unmountOnHide, show, styleShow, styleHide } = this.props
-    if (this.state.next === 'hidden' && unmountOnHide) {
-      this.setState({
-        next: false,
-        mountContent: false,
-      })
-    }
-    const isAuto = this.stylePropIsAuto('width') || this.stylePropIsAuto('height')
-    if (this.state.next === 'auto') {
-      const currentStyle = show ? { ...styleShow } : { ...styleHide }
-      if (this.stylePropIsAuto('width')) {
-        currentStyle.width = 'auto'
-      }
-      if (this.stylePropIsAuto('height')) {
-        currentStyle.height = 'auto'
-      }
-      if (isAuto && !show) {
-        currentStyle.overflow = 'hidden'
-      }
-      this.setState({
-        next: false,
-        currentStyle,
-      })
-    }
-  }
-  animateIn = () => {
-    const { styleHide } = this.props
-    const { currentStyle, mountContent } = this.state
 
-    const nextStyle = mountContent ? { ...currentStyle } : { ...styleHide }
+    // We have to debounce the action of stopping
+    // the "transition" state, since onTransitionEnd
+    // will fire more than once if there are multiple
+    // properties that were transitioned.
 
-    if (this.stylePropIsAuto('width') || this.stylePropIsAuto('height')) {
-      nextStyle.overflow = 'hidden'
+    if (this.transitionRAF) {
+      RAF.cancel(this.transitionRAF)
     }
-
-    this.setState({
-      next: 'show',
-      mountContent: true,
-      currentStyle: nextStyle,
+    this.transitionRAF = RAF(() => {
+      const shouldHide = this.stage === 'leave'
+      this.transitioning = false
+      this.stage = false
+      this.setState(
+        {
+          mountContent: !(shouldHide && unmountOnHide),
+          styleOverrides: {}, // This is to make sure the auto/hidden overrides are gone
+        },
+        onFinish
+      )
     })
   }
-  animateOut = () => {
-    // If we need to animate 'auto' values, measure first
-    const measurements = this.checkNeedToMeasure() ? this.measure() : {}
-    const isAuto = this.stylePropIsAuto('width') || this.stylePropIsAuto('height')
-    this.setState({
-      next: 'hide',
-      currentStyle: {
-        ...this.state.currentStyle,
-        ...(this.stylePropIsAuto('width') ? { width: `${measurements.width}px` } : {}),
-        ...(this.stylePropIsAuto('height') ? { height: `${measurements.height}px` } : {}),
-        ...(isAuto
-          ? {
-            overflow: 'hidden',
-          }
-          : {}),
-      },
-    })
-  }
-  checkNeedToMeasure = () => this.stylePropIsAuto('height') || this.stylePropIsAuto('width')
-  checkIsAuto = () =>
-    (this.stylePropIsAuto('height') && this.el && this.el.style.height === 'auto') ||
-    (this.stylePropIsAuto('width') && this.el && this.el.style.width === 'auto')
   handleRef = el => {
     this.el = el
   }
-  stylePropIsAuto = prop => this.props.styleShow[prop] === 'auto'
+  isProp = (style, prop, value) => style[prop] === value
   measure = () => {
     if (!this.el) {
       return {}
@@ -261,8 +292,10 @@ export default class ReactShow extends React.Component {
     }
   }
   makeStyles = () => {
-    const { style, transitionProperty, duration, easing } = this.props
-    const { currentStyle } = this.state
+    const {
+      style, transitionProperty, duration, easing,
+    } = this.props
+    const { currentStyle, styleOverrides } = this.state
 
     const resolvedEasing = easings[easing] || easing || 'ease-out'
 
@@ -272,10 +305,12 @@ export default class ReactShow extends React.Component {
       transitionTimingFunction: `${resolvedEasing}`,
       ...style,
       ...currentStyle,
+      ...styleOverrides,
     }
   }
   render () {
     const {
+      component: Comp,
       children,
       show: originalShow,
       easing,
@@ -285,20 +320,139 @@ export default class ReactShow extends React.Component {
       transitionOnMount,
       show,
       style,
-      styleHide,
-      styleShow,
+      update,
+      leave,
+      enter,
+      innerRef,
+      onFinish,
       ...rest
     } = this.props
-    const { mountContent } = this.state
+    const { mountContent, currentStyle } = this.state
     return mountContent ? (
-      <div
-        ref={this.handleRef}
-        onTransitionEnd={this.onTransitionEnd}
-        style={this.makeStyles()}
+      <Comp
+        ref={el => {
+          this.handleRef(el)
+          if (innerRef) {
+            innerRef(el)
+          }
+        }}
+        onTransitionEnd={this.transitionEnd}
+        style={this.makeStyles(currentStyle)}
         {...rest}
       >
         {children}
-      </div>
+      </Comp>
     ) : null
   }
 }
+
+// I'll let someone smarter than me figure out how to do this ;)
+
+// export class AnimateGroup extends React.Component {
+//   constructor (props) {
+//     super(props)
+
+//     const { data } = props
+
+//     this.nodes = this.makeNodes(data)
+//   }
+//   componentDidUpdate () {
+//     const { data } = this.props
+
+//     const newNodes = this.makeNodes(data)
+
+//     let needsUpdate
+
+//     if (newNodes.some(node => !this.nodes.find(d => d.key === node.key))) {
+//       needsUpdate = 'diff'
+//     }
+
+//     if (needsUpdate) {
+//       console.log(needsUpdate, newNodes, this.nodes)
+//       this.nodes = this.updateNodes(newNodes)
+//       this.forceUpdate()
+//     }
+//   }
+//   makeNodes = data => {
+//     const { getKey } = this.props
+
+//     return data.map(datum => ({
+//       key: getKey(datum),
+//       data: datum,
+//       show: true,
+//     }))
+//   }
+//   updateNodes = next => {
+//     const nodes = []
+
+//     this.nodes.forEach(node => {
+//       if (next.find(d => d.key === node.key)) {
+//         return
+//       }
+//       exiting.push({
+//         ...node,
+//         show: false,
+//       })
+//     })
+
+//     return [...next, ...exiting]
+//   }
+//   removeNode = node => {
+//     this.nodes = this.nodes.filter(d => d.key !== node.key)
+//     this.forceUpdate()
+//   }
+//   render () {
+//     const {
+//       data,
+//       getKey,
+//       children,
+//       render,
+//       start,
+//       enter,
+//       update,
+//       leave,
+//       duration,
+//       easing,
+//       ...rest
+//     } = this.props
+//     return (
+//       <React.Fragment>
+//         {this.nodes.map((node, i) => (
+//           <Animate
+//             key={node.key}
+//             show={node.show}
+//             start={typeof start === 'function' ? start(node.data, node.key, i) : start}
+//             enter={typeof enter === 'function' ? enter(node.data, node.key, i) : enter}
+//             update={typeof update === 'function' ? update(node.data, node.key, i) : update}
+//             leave={typeof leave === 'function' ? leave(node.data, node.key, i) : leave}
+//             onFinish={() => {
+//               if (!node.show) {
+//                 this.removeNode(node)
+//               }
+//             }}
+//             {...rest}
+//           >
+//             {(render || children)(node.data)}
+//           </Animate>
+//         ))}
+//       </React.Fragment>
+//     )
+//   }
+// }
+
+// function mergeNodes (left, right) {
+//   let nodes = []
+
+//   let lastRightIndex = 0
+
+//   left.forEach(l => {
+//     const index = right.findIndex(r => r.key === l.key)
+//     if (index === -1) {
+//       return nodes.push(l)
+//     }
+//     nodes = [...nodes, ...right.slice(lastRightIndex, index)]
+//     lastRightIndex = index
+//   })
+
+//   return nodes
+// }

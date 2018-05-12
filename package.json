@@ -1,20 +1,19 @@
 {
   "name": "react-show",
-  "version": "2.0.4",
+  "version": "3.0.0-beta.0",
   "description": "react-show React component",
   "main": "lib/index.js",
   "module": "es/index.js",
-  "files": [
-    "css",
-    "es",
-    "lib",
-    "umd"
-  ],
+  "files": ["css", "es", "lib", "umd"],
   "scripts": {
     "build": "nwb build-react-component",
     "clean": "nwb clean-module && nwb clean-demo",
     "start": "nwb serve-react-demo",
     "test": "nwb test-react",
+    "buildDocs": "cd www && yarn build",
+    "startDocs": "cd www && yarn start",
+    "serveDocs": "cd www && yarn serve",
+    "buildDocsProd": "yarn build && cd www && yarn && yarn build",
     "test:coverage": "nwb test-react --coverage",
     "test:watch": "nwb test-react --server",
     "prepublishOnly": "yarn build",
@@ -35,15 +34,10 @@
   "homepage": "",
   "license": "MIT",
   "repository": "",
-  "keywords": [
-    "react-show",
-    "ng-show",
-    "react",
-    "appear",
-    "hide",
-    "collapse"
-  ],
+  "keywords": ["react-show", "ng-show", "react", "appear", "hide", "collapse"],
   "dependencies": {
+    "babel-plugin-source": "^0.0.2",
+    "babel-preset-env": "^1.7.0",
     "raf": "^3.4.0"
   }
 }
