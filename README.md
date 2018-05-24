@@ -6,8 +6,8 @@
 <img alt="" src="https://travis-ci.org/react-tools/react-show.svg?branch=master" />
 </a> -->
 
-<a href="https://react-chat-signup.herokuapp.com/" target="\_parent">
-<img alt="" src="https://img.shields.io/badge/slack-react--chat-blue.svg" />
+<a href="https://spectrum.chat/react-show">
+  <img alt="Join the community on Spectrum" src="https://withspectrum.github.io/badge/badge.svg" />
 </a>
 <a href="https://npmjs.com/package/react-show" target="\_parent">
 <img alt="" src="https://img.shields.io/npm/dm/react-show.svg" />
@@ -47,9 +47,9 @@ A graphics accelerated dependency-free animation component for React.
 
 * [Codesandbox.io](https://codesandbox.io/s/2v66j7pm8y)
 
-## Chat with us on Slack!
+## Chat with us on Spectrum!
 
-Need Help? [Click here to sign up for the React-Tools slack Organization](https://react-chat-signup.herokuapp.com), and join us in the **#react-show** channel! We are constantly discussing implementation details and answering questions. :)
+Need Help? [Click here to sign up for the React-Tools Spectrum community](https://spectrum.chat/react-show). We are constantly discussing implementation details and answering questions. :)
 
 ## Installation
 
