@@ -1,14 +1,26 @@
 {
   "name": "react-show",
-  "version": "3.0.0-beta.0",
+  "version": "3.0.0",
   "description": "react-show React component",
   "main": "lib/index.js",
   "module": "es/index.js",
-  "files": ["css", "es", "lib", "umd"],
+  "files": [
+    "css",
+    "es",
+    "lib",
+    "umd"
+  ],
   "author": "Tanner Linsley <tannerlinsley@gmail.com>",
   "homepage": "https://react-show.js.org",
   "license": "MIT",
-  "keywords": ["react-show", "ng-show", "react", "appear", "hide", "collapse"],
+  "keywords": [
+    "react-show",
+    "ng-show",
+    "react",
+    "appear",
+    "hide",
+    "collapse"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/react-tools/react-show.git"
