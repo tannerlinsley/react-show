@@ -346,6 +346,8 @@ export class Animate extends React.Component {
   }
 }
 
+module.exports = Animate
+
 // I'll let someone smarter than me figure out how to do this ;)
 
 // export class AnimateGroup extends React.Component {
