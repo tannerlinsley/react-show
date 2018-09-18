@@ -22,6 +22,8 @@
 
 A css powered (graphics accelerated) animation component for React.
 
+![](/preview.gif)
+
 ## Why?
 
 - You need to animate, reveal, collapse your react components. Everyone does!
