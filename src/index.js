@@ -3,7 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import RAF from 'raf'
 
-const easings = {
+export const easings = {
   // Cubic
   easeInCubic: 'cubic-bezier(0.550, 0.055, 0.675, 0.190)',
   easeOutCubic: 'cubic-bezier(0.215, 0.610, 0.355, 1.000)',
@@ -49,15 +49,15 @@ export class Animate extends React.Component {
   static easings = easings
   static propTypes = {
     component: PropTypes.string,
-    show: PropTypes.bool,
+    show: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
     easing: PropTypes.string,
     duration: PropTypes.number,
+    preMount: PropTypes.bool,
     transitionProperty: PropTypes.string,
-    unmountOnHide: PropTypes.bool,
+    stayMounted: PropTypes.bool,
     style: PropTypes.object,
     start: PropTypes.object,
     enter: PropTypes.object,
-    update: PropTypes.object,
     leave: PropTypes.object,
     onFinish: PropTypes.func,
     transitionOnMount: PropTypes.bool,
@@ -70,12 +70,12 @@ export class Animate extends React.Component {
     easing: 'easeOutQuad',
     duration: 300,
     transitionProperty: 'all',
-    unmountOnHide: true,
-    transitionOnMount: true,
+    preMount: false,
+    stayMounted: true,
+    transitionOnMount: false,
     style: undefined,
     start: undefined,
     enter: undefined,
-    update: undefined,
     leave: undefined,
     onFinish: () => {},
   }
@@ -83,7 +83,7 @@ export class Animate extends React.Component {
   constructor (props) {
     super(props)
     const {
-      show, transitionOnMount, start, update, enter,
+      show, preMount, transitionOnMount, start, enter,
     } = this.props
 
     this.stage = false
@@ -91,47 +91,43 @@ export class Animate extends React.Component {
     this.transitioning = false
 
     this.state = {
-      mountContent: show,
-      currentStyle: transitionOnMount ? start || update : update || enter,
+      mountContent: preMount || show,
+      currentStyle: transitionOnMount ? start : enter,
       styleOverrides: {},
     }
   }
   componentDidMount () {
-    const {
-      transitionOnMount, show, enter, update,
-    } = this.props
+    const { transitionOnMount, show, enter } = this.props
     if (transitionOnMount && show) {
-      this.transition('enter', enter || update)
+      this.transition('enter', enter)
     }
   }
   componentDidUpdate (oldProps) {
     const {
-      show, update, enter, leave, start,
-    } = this.props
-    const { mountContent } = this.state
+      props: {
+        show, enter, leave, start,
+      },
+      stage,
+    } = this
 
-    if (!oldProps.show && show) {
-      if (mountContent && this.stage === 'leave') {
-        return this.transition('update', update || enter)
-      } else if (!mountContent) {
-        // eslint-disable-next-line
-        this.setState({
-          currentStyle: start || update,
-        })
+    if (show) {
+      // Entering
+      if (!oldProps.show) {
+        if (stage === 'leave') {
+          return this.transition('clean')
+        }
+        if (enter) {
+          return this.transition('enter', enter)
+        }
+        return this.transition('clean')
       }
-      return this.transition('enter', enter || update)
-    }
-
-    if (oldProps.show && !show) {
+      // Did Enter
+      if (stage === 'didEnter') {
+        return this.transition('clean')
+      }
+    } else if (oldProps.show) {
+      // Leaving
       return this.transition('leave', leave || start)
-    }
-
-    if ((!this.stage || this.stage === 'update') && show && update) {
-      const shouldUpdate = Object.keys(update).some(key => this.stageStyles[key] !== update[key])
-
-      if (shouldUpdate) {
-        return this.transition('update', update)
-      }
     }
   }
   ensureMounted = () =>
@@ -151,31 +147,31 @@ export class Animate extends React.Component {
       }
       check()
     })
-  ensureStyles = styles =>
+  setCurrentStyle = style =>
+    this.setState({
+      currentStyle: style,
+    })
+  overrideStyle = style =>
     new Promise(resolve => {
-      const check = () =>
+      const check = () => {
         this.setState(
-          () => ({
-            styleOverrides: styles,
-          }),
+          {
+            styleOverrides: style,
+          },
           () => {
             RAF(() => {
-              if (Object.keys(styles).some(key => !this.el || this.el.style[key] !== styles[key])) {
+              if (Object.keys(style).some(key => !this.el || this.el.style[key] !== style[key])) {
                 return check()
               }
               resolve()
             })
           }
         )
+      }
       check()
     })
-  transition = (stage, styles) => {
-    if (!styles) {
-      throw new Error(`ReactShow: No styles were resolved for the "${stage}" prop!`)
-    }
-
+  transition = (stage, styles = {}) => {
     const { show } = this.props
-    const { currentStyle } = this.state
 
     this.stage = stage
     this.stageStyles = styles
@@ -183,6 +179,8 @@ export class Animate extends React.Component {
 
     let wasAutoWidth
     let wasAutoHeight
+    let isAutoWidth
+    let isAutoHeight
     let isAutoChanged
 
     return Promise.resolve()
@@ -192,69 +190,77 @@ export class Animate extends React.Component {
         }
       })
       .then(() => {
-        wasAutoWidth = this.isProp(currentStyle, 'width', 'auto')
-        wasAutoHeight = this.isProp(currentStyle, 'height', 'auto')
-        const isAutoWidth = this.isProp(styles, 'width', 'auto')
-        const isAutoHeight = this.isProp(styles, 'height', 'auto')
+        const { currentStyle, styleOverrides } = this.state
+
+        const previousStyle = this.makeStyles(currentStyle, styleOverrides)
+        const nextStyle = this.makeStyles(styles)
+
+        wasAutoWidth = this.isProp(previousStyle, 'width', 'auto')
+        wasAutoHeight = this.isProp(previousStyle, 'height', 'auto')
+        isAutoWidth = this.isProp(nextStyle, 'width', 'auto')
+        isAutoHeight = this.isProp(nextStyle, 'height', 'auto')
 
         const isAutoWidthChanged = wasAutoWidth !== isAutoWidth
         const isAutoHeightChanged = wasAutoHeight !== isAutoHeight
         isAutoChanged = isAutoWidthChanged || isAutoHeightChanged
 
-        let measurements
-
         if (isAutoChanged) {
-          measurements = this.measure()
-          this.setState({
-            styleOverrides: {
-              overflow: 'hidden',
+          // First we have to make sure we are measuring an
+          // inline-block element that is overflow hidden, otherwise measurements
+          // can get very inaccurate
+
+          return this.overrideStyle({
+            display: 'block',
+            overflow: 'hidden',
+          }).then(() => {
+            // Then we measure
+            const measurements = this.measure()
+            // Make sure overflow is hidden while we animate
+            return this.overrideStyle({
               ...(isAutoWidthChanged ? { width: `${measurements.width}px` } : {}),
               ...(isAutoHeightChanged ? { height: `${measurements.height}px` } : {}),
-            },
-          })
-          return this.ensureStyles({
-            overflow: 'hidden',
-            ...(isAutoWidthChanged ? { width: `${measurements.width}px` } : {}),
-            ...(isAutoHeightChanged ? { height: `${measurements.height}px` } : {}),
+            })
           })
         }
-
-        this.setState({
-          styleOverrides: {},
-        })
       })
       .then(() => {
         RAF(() => {
-          this.setState(({ currentStyle, styleOverrides }) => {
-            const nextStyle = {
-              ...currentStyle,
-              ...styles,
-            }
-
-            return {
-              // stage,
-              mountContent: true,
-              currentStyle: nextStyle,
-              styleOverrides: isAutoChanged
+          this.setState(
+            ({ styleOverrides }) => {
+              styleOverrides = isAutoChanged
                 ? {
                   ...styleOverrides,
-                  ...(wasAutoWidth ? { width: nextStyle.width } : {}),
-                  ...(wasAutoHeight ? { height: nextStyle.height } : {}),
+                  ...(wasAutoWidth ? { width: styles.width } : {}),
+                  ...(wasAutoHeight ? { height: styles.height } : {}),
                 }
-                : {},
+                : styleOverrides
+
+              return {
+                mountContent: true,
+                currentStyle: styles,
+                styleOverrides,
+              }
+            },
+            () => {
+              // If no styles were applied, then we need to manually complete the transition
+              // TODO: this might also need to be done if the transitionProperty doesn't
+              // match any of the styles provided.
+              // if (!styles) {
+              //   this.completeTransition();
+              // }
             }
-          })
+          )
         })
       })
   }
   transitionEnd = e => {
-    const { unmountOnHide, onFinish } = this.props
+    if (e) {
+      e.persist()
 
-    e.persist()
-
-    // Only handle transitionEnd for this element
-    if (e.target !== this.el) {
-      return
+      // Only handle transitionEnd for this element
+      if (e.target !== this.el) {
+        return
+      }
     }
 
     // We have to debounce the action of stopping
@@ -265,18 +271,27 @@ export class Animate extends React.Component {
     if (this.transitionRAF) {
       RAF.cancel(this.transitionRAF)
     }
-    this.transitionRAF = RAF(() => {
-      const shouldHide = this.stage === 'leave'
-      this.transitioning = false
+    this.transitionRAF = RAF(this.completeTransition)
+  }
+  completeTransition = () => {
+    const { stayMounted, onFinish } = this.props
+
+    const shouldHide = this.stage === 'leave'
+    this.transitioning = false
+    if (this.stage === 'enter') {
+      this.stage = 'didEnter'
+    } else if (this.stage === 'mount') {
+      this.stage = 'mounted'
+    } else {
       this.stage = false
-      this.setState(
-        {
-          mountContent: !(shouldHide && unmountOnHide),
-          styleOverrides: {}, // This is to make sure the auto/hidden overrides are gone
-        },
-        onFinish
-      )
-    })
+    }
+    this.setState(
+      {
+        mountContent: !(shouldHide && !stayMounted),
+        styleOverrides: {}, // This is to make sure the auto/hidden overrides are gone
+      },
+      onFinish
+    )
   }
   handleRef = el => {
     this.el = el
@@ -291,11 +306,10 @@ export class Animate extends React.Component {
       height: this.el.scrollHeight,
     }
   }
-  makeStyles = () => {
+  makeStyles = (currentStyle = {}, overrides = {}) => {
     const {
       style, transitionProperty, duration, easing,
     } = this.props
-    const { currentStyle, styleOverrides } = this.state
 
     const resolvedEasing = easings[easing] || easing || 'ease-out'
 
@@ -305,7 +319,7 @@ export class Animate extends React.Component {
       transitionTimingFunction: `${resolvedEasing}`,
       ...style,
       ...currentStyle,
-      ...styleOverrides,
+      ...overrides,
     }
   }
   render () {
@@ -316,18 +330,18 @@ export class Animate extends React.Component {
       easing,
       duration,
       transitionProperty,
-      unmountOnHide,
+      stayMounted,
       transitionOnMount,
       show,
       style,
-      update,
       leave,
       enter,
       innerRef,
       onFinish,
+      preMount,
       ...rest
     } = this.props
-    const { mountContent, currentStyle } = this.state
+    const { mountContent, currentStyle, styleOverrides } = this.state
     return mountContent ? (
       <Comp
         ref={el => {
@@ -337,7 +351,7 @@ export class Animate extends React.Component {
           }
         }}
         onTransitionEnd={this.transitionEnd}
-        style={this.makeStyles(currentStyle)}
+        style={this.makeStyles(currentStyle, styleOverrides)}
         {...rest}
       >
         {children}
