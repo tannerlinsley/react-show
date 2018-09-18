@@ -22,7 +22,7 @@
 
 A css powered (graphics accelerated) animation component for React.
 
-![](/preview.gif)
+[![](/preview.gif)](https://codesandbox.io/s/2v66j7pm8y)
 
 ## Why?
 
