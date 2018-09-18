@@ -20,7 +20,7 @@
 
 # React Show
 
-A css-based (graphics accelerated) dependency-free animation component for React.
+A css powered (graphics accelerated) animation component for React.
 
 ## Why?
 
@@ -30,9 +30,9 @@ A css-based (graphics accelerated) dependency-free animation component for React
 
 ## Features
 
-- 3.7 kb gzipped. Wow!
-- Powered by native CSS animations & transitions. Put that on the GPU baby!
-- Animates `height: auto;` and `width: auto;` for you!
+- 3.7 kb gzipped
+- Powered by native CSS animations & transitions on the GPU when possible
+- Animates `height: auto;` and `width: auto;`
 
 ## Demo
 
