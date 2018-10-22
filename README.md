@@ -73,7 +73,7 @@ You can create a simple expander component with the `Animate` component!
 import { Animate } from "react-show";
 
 const SimpleExample = () => (
-  <ReactShow
+  <Animate
     show={true || false} // Toggle true or false to show or hide the content!
     duration={500}
     style={{
@@ -85,7 +85,7 @@ const SimpleExample = () => (
     }}
   >
     Hello world!
-  </ReactShow>
+  </Animate>
 );
 ```
 
@@ -97,7 +97,7 @@ You can create a simple expander component with the `Animate` component!
 import { Animate } from "react-show";
 
 const SimpleExample = () => (
-  <ReactShow
+  <Animate
     show={true || false} // Toggle true or false to show or hide the content!
     transitionOnMount // Will trigger the transition when the component is mounted and show === true
     preMount // Mounts the component's children on first render even if show === false
@@ -127,7 +127,7 @@ const SimpleExample = () => (
     }}
   >
     Hello world!
-  </ReactShow>
+  </Animate>
 );
 ```
 
@@ -141,13 +141,13 @@ You can configure `duration`, `easing`, and `transition` by:
 ReactShow comes with a wide variety of easings built-in! See [Easing Options](#easing-options) for a full list.
 
 ```javascript
-import ReactShow from "react-show";
+import { Animate } from "react-show";
 
 const DurationAndEasingExample = () => (
-  <ReactShow
+  <Animate
     show={true || false} // Toggle true or false to show or hide the content!
     duration={500} // // The duration of the transition in milliseconds
-    easing={ReactShow.easings.easeOutQuad} // Comes with all the easings you could want!
+    easing={Animate.easings.easeOutQuad} // Comes with all the easings you could want!
     enter={{
       // Only use this duration/delay during the `enter` stage
       transitionDuration: ".3s",
@@ -155,7 +155,7 @@ const DurationAndEasingExample = () => (
     }}
   >
     Hello world!
-  </ReactShow>
+  </Animate>
 );
 ```
 
@@ -193,19 +193,19 @@ React-Show uses the following lifecycle to determine which styles to show:
 
 ## Easing Options
 
-React-Show comes packaged with some awesome easings that are accessible via `ReactShow.easings`. They are extremely simple to use too:
+React-Show comes packaged with some awesome easings that are accessible via `Animate.easings`. They are extremely simple to use too:
 
 ```javascript
-import ReactShow from "react-show";
+import { Animate } from "react-show";
 
 const SimpleExample = () => (
-  <ReactShow show={true} easing={ReactShow.easings.easeOutQuart}>
+  <Animate show={true} easing={Animate.easings.easeOutQuart}>
     Hello world!
-  </ReactShow>
+  </Animate>
 );
 ```
 
-Below is a full list of the available easings exported at `ReactShow.easings`
+Below is a full list of the available easings exported at `Animate.easings`
 
 ```javascript
 import { easings } from "react-show";
