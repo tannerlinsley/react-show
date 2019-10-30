@@ -60,6 +60,8 @@ export class Animate extends React.Component {
     enter: PropTypes.object,
     leave: PropTypes.object,
     onFinish: PropTypes.func,
+    onMount: PropTypes.func,
+    onWillUnmount: PropTypes.func,
     transitionOnMount: PropTypes.bool,
     children: PropTypes.node.isRequired,
   }
@@ -78,6 +80,8 @@ export class Animate extends React.Component {
     enter: undefined,
     leave: undefined,
     onFinish: () => {},
+    onMount: () => {},
+    onWillUnmount: () => {},
   }
 
   constructor (props) {
@@ -338,6 +342,8 @@ export class Animate extends React.Component {
       enter,
       innerRef,
       onFinish,
+      onMount,
+      onWillUnmount,
       preMount,
       ...rest
     } = this.props
@@ -354,9 +360,23 @@ export class Animate extends React.Component {
         style={this.makeStyles(currentStyle, styleOverrides)}
         {...rest}
       >
-        {children}
+        <MountNotifier onMount={onMount} onWillUnmount={onWillUnmount}>
+          {children}
+        </MountNotifier>
       </Comp>
     ) : null
+  }
+}
+
+class MountNotifier extends React.Component {
+  componentDidMount = () => {
+    this.props.onMount()
+  }
+  componentWillUnmount = () => {
+    this.props.onWillUnmount()
+  }
+  render () {
+    return this.props.children
   }
 }
 
