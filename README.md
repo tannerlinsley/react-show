@@ -260,19 +260,23 @@ easings ===
 
 ###### Props
 
-| Prop                 | Required | Default Value  | Description                                                          |
-| :------------------- | :------- | :------------- | :------------------------------------------------------------------- |
-| `show`               | `true`   | `false`        | Determines whether to "show" the content or not.                     |
-| `duration`           |          | `300`          | The `transition-duration` of the transition used to show the content |
-| `easing`             |          | `easeOutQuint` | The `transition-timing-function` used to show the content            |
-| `transitionProperty` |          | `all`          | The `transition-property` used to show the content                   |
-| `preMount`           |          | `false`        | If `true`, element will mount on first render if `show === false`    |
-| `stayMounted`        |          | `false`        | If `true`, element will stay mounted when `show === false`           |
-| `transitionOnMount`  |          | `false`        | If `true`, element will animate from the `start` style on mount      |
-| `style`              |          | `undefined`    | React style object (See [lifecycle](#lifecycle) for more details)    |
-| `start`              |          | `undefined`    | React style object (See [lifecycle](#lifecycle) for more details)    |
-| `enter`              |          | `undefined`    | React style object (See [lifecycle](#lifecycle) for more details)    |
-| `leave`              |          | `undefined`    | React style object (See [lifecycle](#lifecycle) for more details)    |
+| Prop                 | Required | Default Value  | Description                                                                |
+| :------------------- | :------- | :------------- | :------------------------------------------------------------------------- |
+| `show`               | `true`   | `false`        | Determines whether to "show" the content or not.                           |
+| `duration`           |          | `300`          | The `transition-duration` of the transition used to show the content       |
+| `easing`             |          | `easeOutQuint` | The `transition-timing-function` used to show the content                  |
+| `transitionProperty` |          | `all`          | The `transition-property` used to show the content                         |
+| `preMount`           |          | `false`        | If `true`, element will mount on first render if `show === false`          |
+| `stayMounted`        |          | `false`        | If `true`, element will stay mounted when `show === false`                 |
+| `transitionOnMount`  |          | `false`        | If `true`, element will animate from the `start` style on mount            |
+| `style`              |          | `undefined`    | React style object (See [lifecycle](#lifecycle) for more details)          |
+| `start`              |          | `undefined`    | React style object (See [lifecycle](#lifecycle) for more details)          |
+| `enter`              |          | `undefined`    | React style object (See [lifecycle](#lifecycle) for more details)          |
+| `leave`              |          | `undefined`    | React style object (See [lifecycle](#lifecycle) for more details)          |
+| `component`          |          | `div`          | Use a <span> (or custom) component as the wrapper instead of a <div>       |
+| `onFinish`           |          | `noop`         | Function called when the component finishes transitioning.                 |
+| `onMount`            |          | `noop`         | Function called when the children passed to Animate are mounted.           |
+| `onWillUnmount`      |          | `noop`         | Function called right before the children passed to Animate are unmounted. |
 
 ## Contributing
 
