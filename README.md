@@ -267,7 +267,7 @@ easings ===
 | `easing`             |          | `easeOutQuint` | The `transition-timing-function` used to show the content                  |
 | `transitionProperty` |          | `all`          | The `transition-property` used to show the content                         |
 | `preMount`           |          | `false`        | If `true`, element will mount on first render if `show === false`          |
-| `stayMounted`        |          | `false`        | If `true`, element will stay mounted when `show === false`                 |
+| `stayMounted`        |          | `true`        | If `true`, element will stay mounted when `show === false`                 |
 | `transitionOnMount`  |          | `false`        | If `true`, element will animate from the `start` style on mount            |
 | `style`              |          | `undefined`    | React style object (See [lifecycle](#lifecycle) for more details)          |
 | `start`              |          | `undefined`    | React style object (See [lifecycle](#lifecycle) for more details)          |
